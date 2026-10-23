@@ -1,0 +1,51 @@
+:root{--ease-soft:cubic-bezier(.22,.7,.2,1);--ease-settle:cubic-bezier(.2,.9,.3,1)}
+.page-body{view-transition-name:study-page}
+.nav-item{position:relative;isolation:isolate;background:transparent!important;transition:color 180ms ease,transform 180ms var(--ease-soft)}
+.nav-item>svg,.nav-item>span:not(.nav-active-pill){position:relative;z-index:1}
+.nav-active-pill{position:absolute;inset:0;background:var(--soft);border-radius:inherit;view-transition-name:navigation-pill;z-index:0}
+.nav-label{display:inline-flex;align-items:center;gap:8px}
+.nav-item:not(.active):hover{background:var(--soft)!important}
+.button,.icon-button,.text-button,.question-item,.segmented button,.detail-tabs button{transition:background-color 180ms ease,color 180ms ease,border-color 180ms ease,box-shadow 220ms ease,transform 220ms var(--ease-settle)}
+.button:hover{transform:translateY(-1px);box-shadow:0 5px 15px #30392f08}
+.button:active,.icon-button:active,.text-button:active,.segmented button:active{transform:scale(.965)}
+.question-item:active{transform:scale(.992)}
+.question-item{border-radius:16px;transition:border-radius 240ms var(--ease-soft),background-color 200ms ease,transform 240ms var(--ease-settle)}
+.motion-textarea{field-sizing:fixed!important}
+.search-box{transition:border-color 180ms ease,box-shadow 180ms ease}
+.search-box:focus-within{border-color:var(--accent);box-shadow:0 3px 0 -2px var(--accent)}
+.edit-modal{view-transition-name:edit-sheet;transform-origin:50% 70%;max-height:calc(100dvh - 48px);overflow-y:auto}
+.modal-backdrop{view-transition-name:modal-veil}
+.toast{animation:notice-in 260ms var(--ease-soft) both}
+@keyframes veil-in{from{background-color:transparent;backdrop-filter:blur(0)}to{background-color:#23291e40;backdrop-filter:blur(5px)}}
+@keyframes notice-in{from{opacity:0;translate:0 10px;scale:.98}to{opacity:1;translate:0 0;scale:1}}
+@keyframes page-in{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes page-out{from{opacity:1;transform:translateY(0)}to{opacity:0;transform:translateY(-5px)}}
+@keyframes sheet-in{from{opacity:0;transform:translateY(12px) scale(.97)}to{opacity:1;transform:none}}
+@keyframes sheet-out{to{opacity:0;transform:translateY(7px) scale(.98)}}
+@keyframes veil-appear{from{opacity:0}to{opacity:1}}
+@keyframes veil-disappear{to{opacity:0}}
+::view-transition-group(*){animation-duration:300ms;animation-timing-function:var(--ease-soft)}
+::view-transition-old(root),::view-transition-new(root){animation:none;mix-blend-mode:normal}
+::view-transition-old(study-page){animation:page-out 90ms ease both;mix-blend-mode:normal}
+::view-transition-new(study-page){animation:page-in 260ms 50ms var(--ease-soft) both;mix-blend-mode:normal}
+::view-transition-group(navigation-pill){z-index:1}
+::view-transition-group(nav-label-questions),::view-transition-group(nav-label-memory),::view-transition-group(nav-label-library),::view-transition-group(nav-label-evolution),::view-transition-group(nav-label-sync){z-index:2}
+::view-transition-old(nav-label-questions),::view-transition-old(nav-label-memory),::view-transition-old(nav-label-library),::view-transition-old(nav-label-evolution),::view-transition-old(nav-label-sync),::view-transition-new(nav-label-questions),::view-transition-new(nav-label-memory),::view-transition-new(nav-label-library),::view-transition-new(nav-label-evolution),::view-transition-new(nav-label-sync){animation:none;mix-blend-mode:normal}
+::view-transition-old(edit-sheet){animation:sheet-out 120ms ease both}
+::view-transition-new(edit-sheet){animation:sheet-in 260ms var(--ease-soft) both}
+::view-transition-group(modal-veil){z-index:3}
+::view-transition-group(edit-sheet){z-index:4}
+::view-transition-old(modal-veil){animation:veil-disappear 120ms ease both}
+::view-transition-new(modal-veil){animation:veil-appear 200ms ease both}
+:root[data-transition-kind=overlay]::view-transition-old(study-page),:root[data-transition-kind=overlay]::view-transition-new(study-page){animation:none}
+/* Supported browsers interpolate disclosure size; native details remains the fallback. */
+@supports selector(details::details-content){
+ details{interpolate-size:allow-keywords}
+ details::details-content{block-size:0;opacity:0;overflow:clip;transition:block-size 240ms var(--ease-soft),opacity 180ms ease,content-visibility 240ms;transition-behavior:allow-discrete}
+ details[open]::details-content{block-size:auto;opacity:1}
+}
+@media(prefers-reduced-motion:reduce){
+ *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+ ::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important}
+ .button:hover,.button:active,.icon-button:active,.text-button:active,.question-item:active,.segmented button:active{transform:none}
+}

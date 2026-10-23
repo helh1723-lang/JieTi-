@@ -1,0 +1,546 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "JietiProtocol",
+  "version": 1,
+  "definitions": {
+    "MemoryItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "category",
+        "scope",
+        "key",
+        "value",
+        "sourceIds",
+        "origin",
+        "confidence",
+        "observedAt",
+        "status",
+        "locked"
+      ],
+      "properties": {
+        "category": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "origin": {
+          "type": "string"
+        },
+        "confidence": {
+          "type": "number"
+        },
+        "observedAt": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "locked": {
+          "type": "boolean"
+        }
+      }
+    },
+    "MasterySnapshot": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "concept",
+        "state",
+        "evidenceIds",
+        "observedAt"
+      ],
+      "properties": {
+        "scope": {
+          "type": "string"
+        },
+        "concept": {
+          "type": "string"
+        },
+        "state": {
+          "type": "string"
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "observedAt": {
+          "type": "string"
+        }
+      }
+    },
+    "TeachingPolicyVersion": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "parentId",
+        "status",
+        "reason",
+        "instructions",
+        "evidenceIds",
+        "observations",
+        "negativeFeedback"
+      ],
+      "properties": {
+        "parentId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "reason": {
+          "type": "string"
+        },
+        "instructions": {
+          "type": "string"
+        },
+        "evidenceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "observations": {
+          "type": "integer"
+        },
+        "negativeFeedback": {
+          "type": "integer"
+        }
+      }
+    },
+    "PolicyEvaluation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "policyId",
+        "passed",
+        "criticalViolations",
+        "baselineScore",
+        "candidateScore",
+        "caseIds",
+        "notes"
+      ],
+      "properties": {
+        "policyId": {
+          "type": "string"
+        },
+        "passed": {
+          "type": "boolean"
+        },
+        "criticalViolations": {
+          "type": "integer"
+        },
+        "baselineScore": {
+          "type": "number"
+        },
+        "candidateScore": {
+          "type": "number"
+        },
+        "caseIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "notes": {
+          "type": "string"
+        }
+      }
+    },
+    "ForgetRule": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "memoryId",
+        "scope",
+        "key",
+        "sourceIds",
+        "reason"
+      ],
+      "properties": {
+        "memoryId": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "key": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "reason": {
+          "type": "string"
+        }
+      }
+    },
+    "Question": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "scope",
+        "concepts",
+        "transcription",
+        "studentWork",
+        "assetIds",
+        "classification",
+        "errorTypes",
+        "diagnosis",
+        "solution",
+        "status"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "concepts": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "transcription": {
+          "type": "string"
+        },
+        "studentWork": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "classification": {
+          "type": "string"
+        },
+        "errorTypes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "diagnosis": {
+          "type": "string"
+        },
+        "solution": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "classificationOrigin": {
+          "type": "string"
+        },
+        "userEditedFields": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Message": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questionId",
+        "role",
+        "content",
+        "mode",
+        "memoryIds",
+        "assetIds",
+        "policyId"
+      ],
+      "properties": {
+        "questionId": {
+          "type": "string"
+        },
+        "role": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "memoryIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "policyId": {
+          "type": "string"
+        }
+      }
+    },
+    "Evidence": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questionId",
+        "scope",
+        "concept",
+        "outcome",
+        "independent",
+        "hintLevel",
+        "sourceIds"
+      ],
+      "properties": {
+        "questionId": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "concept": {
+          "type": "string"
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "independent": {
+          "type": "boolean"
+        },
+        "hintLevel": {
+          "type": "integer"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Document": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "title",
+        "scope",
+        "assetIds",
+        "mime",
+        "status",
+        "pages",
+        "processed",
+        "error",
+        "paused"
+      ],
+      "properties": {
+        "title": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "mime": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "pages": {
+          "type": "integer"
+        },
+        "processed": {
+          "type": "integer"
+        },
+        "error": {
+          "type": "string"
+        },
+        "paused": {
+          "type": "boolean"
+        },
+        "supplementalText": {
+          "type": "string"
+        }
+      }
+    },
+    "Citation": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "documentId",
+        "page",
+        "text",
+        "questionId"
+      ],
+      "properties": {
+        "documentId": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "text": {
+          "type": "string"
+        },
+        "questionId": {
+          "type": "string"
+        }
+      }
+    },
+    "Artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questionId",
+        "mode",
+        "html",
+        "summary",
+        "status",
+        "assetIds"
+      ],
+      "properties": {
+        "questionId": {
+          "type": "string"
+        },
+        "mode": {
+          "type": "string"
+        },
+        "html": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        }
+      }
+    },
+    "Note": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "questionId",
+        "content"
+      ],
+      "properties": {
+        "questionId": {
+          "type": "string"
+        },
+        "content": {
+          "type": "string"
+        }
+      }
+    },
+    "Setting": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "key",
+        "value"
+      ],
+      "properties": {
+        "key": {
+          "type": "string"
+        },
+        "value": {
+          "type": "string"
+        }
+      }
+    }
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "kind",
+    "rev",
+    "baseRev",
+    "payload",
+    "deleted",
+    "updatedAt",
+    "deviceId"
+  ],
+  "properties": {
+    "id": {
+      "type": "string",
+      "maxLength": 160
+    },
+    "kind": {
+      "enum": [
+        "memory",
+        "mastery",
+        "policy",
+        "evaluation",
+        "forget",
+        "question",
+        "message",
+        "evidence",
+        "document",
+        "citation",
+        "artifact",
+        "note",
+        "setting"
+      ]
+    },
+    "rev": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "baseRev": {
+      "type": "string",
+      "maxLength": 80
+    },
+    "payload": {
+      "type": "object"
+    },
+    "deleted": {
+      "type": "boolean"
+    },
+    "updatedAt": {
+      "type": "string"
+    },
+    "deviceId": {
+      "type": "string",
+      "maxLength": 100
+    }
+  }
+}

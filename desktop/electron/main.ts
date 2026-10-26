@@ -1,4 +1,4 @@
-import {app,BrowserWindow,ipcMain,dialog,protocol,net} from 'electron';
+import {app,BrowserWindow,ipcMain,dialog,protocol,net,shell} from 'electron';
 import {Store} from '../core/store';
 import {SyncServer} from '../core/sync';
 import {exportData} from '../core/export';
@@ -9,7 +9,10 @@ import {pathToFileURL} from 'node:url';
 import type {SyncRecord} from '../../shared/generated/protocol';
 import {motionSmoke} from './motion-smoke';
 import {glassSmoke} from './glass-smoke';
+import {studyNote} from '../../shared/study-note';
+import {optimizationSmoke} from './optimization-smoke';
 import {bugfixSmoke} from './bugfix-smoke';
+import {curriculumSmoke} from './curriculum-smoke';
 let store:Store,server:SyncServer,window:BrowserWindow|undefined;
 if(process.env.JIETI_DATA_DIR){fs.mkdirSync(process.env.JIETI_DATA_DIR,{recursive:true});app.setPath('userData',process.env.JIETI_DATA_DIR);app.setPath('crashDumps',path.join(process.env.JIETI_DATA_DIR,'crashes'));}
 const primaryInstance=app.requestSingleInstanceLock();
@@ -29,7 +32,7 @@ async function exportFiles(ids?:string[]){
  try{await printWindow.loadFile(htmlFile);await printWindow.webContents.executeJavaScript('document.fonts.ready.then(()=>true)');const pdf=await printWindow.webContents.printToPDF({printBackground:true,pageSize:'A4',preferCSSPageSize:true,displayHeaderFooter:true,headerTemplate:'<span></span>',footerTemplate:'<div style="font-size:9px;color:#73786e;text-align:center;width:100%">截题 · <span class="pageNumber"></span> / <span class="totalPages"></span></div>'});fs.writeFileSync(path.join(root,'我的错题复盘.pdf'),pdf);}finally{printWindow.destroy();}
  const assets=path.join(root,'screenshots');fs.mkdirSync(assets);
  for(const q of data.questions)for(const hash of q.payload.assetIds as string[]){const src=store.assetPath(hash);if(fs.existsSync(src))fs.copyFileSync(src,path.join(assets,hash+'.png'));}
- const questionIds=new Set(data.questions.map(q=>q.id));const backup=fs.openSync(path.join(root,'backup.json'),'w');fs.writeSync(backup,'{"protocol":1,"records":[');let first=true;for(const r of store.each()){if(r.deleted||r.kind==='memory'&&store.isForgotten(r))continue;if(['question','message','artifact','note','evidence','citation'].includes(r.kind)&&!questionIds.has(r.id)&&!questionIds.has(String(r.payload.questionId)))continue;fs.writeSync(backup,(first?'':',')+JSON.stringify(r));first=false;}fs.writeSync(backup,']}');fs.closeSync(backup);
+ const questionIds=new Set(data.questions.map(q=>q.id));const backup=fs.openSync(path.join(root,'backup.json'),'w');fs.writeSync(backup,'{"protocol":1,"records":[');let first=true;for(const r of store.each()){if(r.deleted||r.kind==='memory'&&store.isForgotten(r))continue;if(['question','message','artifact','note','evidence','citation','practice','attempt'].includes(r.kind)&&!questionIds.has(r.id)&&!questionIds.has(String(r.payload.questionId)))continue;fs.writeSync(backup,(first?'':',')+JSON.stringify(r));first=false;}fs.writeSync(backup,']}');fs.closeSync(backup);
  return root;
 }
 if(primaryInstance)app.whenReady().then(async()=>{
@@ -39,17 +42,20 @@ if(primaryInstance)app.whenReady().then(async()=>{
  server=new SyncServer(store,changed,async()=>{const today=new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Shanghai'});await exportFiles(store.all('question').filter(r=>new Date(r.updatedAt).toLocaleDateString('sv-SE',{timeZone:'Asia/Shanghai'})===today).map(r=>r.id));});
  window=new BrowserWindow({width:1420,height:920,minWidth:800,minHeight:650,backgroundColor:'#f8f7f2',title:'截题 · 学习手记',webPreferences:{preload:path.join(__dirname,'preload.cjs'),nodeIntegration:false,contextIsolation:true,sandbox:true}});
  window.webContents.setWindowOpenHandler(()=>({action:'deny'}));window.webContents.on('will-navigate',e=>e.preventDefault());window.webContents.session.setPermissionRequestHandler((_wc,_p,cb)=>cb(false));
+ on('open-source',async(value:string)=>{const u=new URL(value);if(!['https:','http:'].includes(u.protocol)||u.username||u.password)throw new Error('来源地址无效');await shell.openExternal(u.href);});
  on('snapshot',()=>({records:store.uiRecords(),conflicts:store.conflicts(),deviceId:store.deviceId,root:store.root}));
  on('edit',(id:string,p:Record<string,unknown>,expectedRev?:string)=>{const r=store.get(id);if(!r||!['question','memory','mastery','document','note'].includes(r.kind))throw new Error('该记录不能直接编辑');if(expectedRev!==undefined&&r.rev!==expectedRev){const base=store.history(id,expectedRev);if(!base||Object.keys(p).some(k=>JSON.stringify(base.payload[k])!==JSON.stringify(r.payload[k])))throw new Error('同一字段已更新，当前草稿保留；请复制后重新打开最新版本');}const next=store.edit(id,p);changed();return next;});
  on('forget',(id:string)=>{store.forget(id);changed();});
  on('delete',(id:string,expectedRev:string)=>{if(store.get(id)?.rev!==expectedRev)throw new Error('记录已更新，请重新确认最新内容');store.delete(id);changed();});
  on('sync',async(start:boolean)=>{if(!start){server.stop();return null;}const data=await server.start();const pairing='jieti://pair?data='+Buffer.from(JSON.stringify(data)).toString('base64url');return {...data,pairing,qr:await QRCode.toDataURL(pairing)};});
- on('import',async(scope:string)=>{const result=await dialog.showOpenDialog(window!,{title:'导入课程资料，下次同步时传到平板',properties:['openFile','multiSelections'],filters:[{name:'课程资料',extensions:['pdf','png','jpg','jpeg','docx','txt','md']}]});if(result.canceled)return [];const docs:SyncRecord[]=[];for(const file of result.filePaths){const hash=await store.addAssetFile(file);docs.push(store.put('document',{title:path.basename(file),scope,assetIds:[hash],mime:path.extname(file).slice(1),status:'awaiting_tablet',pages:0,processed:0,error:'',paused:false}));}changed();return docs;});
+ on('import',async(scope:string,versionOf?:string)=>{const result=await dialog.showOpenDialog(window!,{title:'导入课程资料，下次同步时传到平板',properties:['openFile','multiSelections'],filters:[{name:'课程资料',extensions:['pdf','png','jpg','jpeg','docx','txt','md']}]});if(result.canceled)return [];const docs:SyncRecord[]=[];for(const file of result.filePaths){const hash=await store.addAssetFile(file);const existing=store.all('document').find(r=>(r.payload.assetIds as string[]).includes(hash));let mode:'reuse'|'independent'='reuse';if(existing){const choice=await dialog.showMessageBox(window!,{type:'question',title:'资料已在库中',message:`已找到「${existing.payload.title}」`,detail:'默认复用资料记录和索引。只有确需分开管理时才保留独立副本。',buttons:['使用已有资料','保留独立资料','取消'],defaultId:0,cancelId:2});if(choice.response===2)continue;if(choice.response===1)mode='independent';}docs.push(store.importDocument(hash,path.basename(file),scope,path.extname(file).slice(1),versionOf&&!existing?'version':mode,versionOf));}changed();return docs;});
  on('export',exportFiles);
- on('note',(questionId:string,content:string,expectedRev?:string)=>{if(!store.get(questionId)||content.length>50000)throw new Error('笔记无效');const existing=store.all('note').find(r=>r.payload.questionId===questionId);if(expectedRev!==undefined&&(existing?.rev||'')!==expectedRev)throw new Error('笔记已更新，当前草稿仍保留；请复制后重新打开最新版本');const saved=store.put('note',{questionId,content},existing?.id);changed();return saved;});
+ on('note',(questionId:string,content:string,expectedRev?:string)=>{if(!store.get(questionId)||content.length>50000)throw new Error('笔记无效');const existing=studyNote(store.all('note'),questionId);if(expectedRev!==undefined&&(existing?.rev||'')!==expectedRev)throw new Error('笔记已更新，当前草稿仍保留；请复制后重新打开最新版本');const saved=store.put('note',{questionId,content,origin:'user',sourceHash:''},existing?.id||`study-note:${questionId}`);changed();return saved;});
  on('resolve',(id:string,side:'local'|'incoming')=>{if(!['local','incoming'].includes(side))throw new Error('选择无效');store.resolve(id,side);changed();});
  on('policy',(id:string)=>{const p=store.get(id);if(p?.kind!=='policy'||!['active','retired','monitoring'].includes(String(p.payload.status)))throw new Error('只能恢复已通过评测的策略');for(const r of store.all('policy'))if(['active','monitoring'].includes(String(r.payload.status)))store.edit(r.id,{status:'retired'});store.edit(id,{status:'active'});changed();});
  await window.loadURL('jieti://app/index.html');
+ if(process.argv.includes('--curriculum-smoke')){try{await curriculumSmoke(window,path.join(process.cwd(),'docs','evidence','curriculum-021'));app.quit();}catch(error){fs.writeFileSync(path.join(process.cwd(),'.cache','curriculum-smoke-failure.txt'),String(error));app.exit(1);}return;}
+ if(process.argv.includes('--optimization-smoke')){try{await optimizationSmoke(window,path.join(process.cwd(),'docs','evidence','optimization-017'));app.quit();}catch(error){fs.writeFileSync(path.join(process.cwd(),'.cache','optimization-smoke-failure.txt'),String(error));app.exit(1);}return;}
  if(process.argv.includes('--bugfix-smoke')){try{await bugfixSmoke(window,path.join(process.cwd(),'.cache','bugfix'));app.quit();}catch(error){fs.writeFileSync(path.join(process.cwd(),'.cache','bugfix-failure.txt'),String(error));app.exit(1);}return;}
  if(process.argv.includes('--glass-smoke')){try{await glassSmoke(window,path.join(process.cwd(),'.cache','glass'));app.quit();}catch(error){fs.writeFileSync(path.join(process.cwd(),'.cache','glass-failure.txt'),String(error));app.exit(1);}return;}
  if(process.argv.includes('--motion-smoke')){try{await motionSmoke(window,path.join(process.cwd(),'.cache','motion'));app.quit();}catch(error){fs.writeFileSync(path.join(process.cwd(),'.cache','motion-failure.txt'),String(error));app.exit(1);}return;}

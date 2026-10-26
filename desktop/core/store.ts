@@ -11,7 +11,7 @@ import type {Kind,SyncRecord,MemoryItem} from '../../shared/generated/protocol';
 const ajv=new Ajv({strict:false});
 const validate=ajv.compile(schema);
 const payloadValidators=new Map(Object.entries(schema.definitions).map(([k,v])=>[k,ajv.compile(v)]));
-const names:Record<Kind,string>={memory:'MemoryItem',mastery:'MasterySnapshot',policy:'TeachingPolicyVersion',evaluation:'PolicyEvaluation',forget:'ForgetRule',question:'Question',message:'Message',evidence:'Evidence',document:'Document',citation:'Citation',artifact:'Artifact',note:'Note',setting:'Setting'};
+const names:Record<Kind,string>={memory:'MemoryItem',mastery:'MasterySnapshot',policy:'TeachingPolicyVersion',evaluation:'PolicyEvaluation',forget:'ForgetRule',question:'Question',message:'Message',evidence:'Evidence',document:'Document',citation:'Citation',artifact:'Artifact',note:'Note',setting:'Setting',plan:'LearningPlan',practice:'PracticeItem',attempt:'PracticeAttempt'};
 export function assertRecord(v:unknown):asserts v is SyncRecord {
   if(!validate(v))throw new Error('协议格式不正确');
   const record=v as unknown as SyncRecord;
@@ -27,16 +27,20 @@ export function mergeRecords(local:SyncRecord,incoming:SyncRecord,base?:SyncReco
   if(same(local.payload,incoming.payload))return {record:incoming,fields:[]};
   if(incoming.baseRev===local.rev)return {record:incoming,fields:[]};
   if(local.baseRev===incoming.rev)return {record:local,fields:[]};
+  if(base?.rev===local.rev)return {record:incoming,fields:[]};
+  if(base?.rev===incoming.rev)return {record:local,fields:[]};
   if(!base)return {record:local,fields:['无共同版本']};
   const merged={...local.payload};const fields:string[]=[];
   for(const key of new Set([...Object.keys(local.payload),...Object.keys(incoming.payload)])){
     const l=local.payload[key],r=incoming.payload[key],b=base.payload[key];
+    if(key==='userEditedFields'){merged[key]=[...new Set([...(l as string[]||[]),...(r as string[]||[])])];continue;}
     if(same(l,r))continue;
     if(same(l,b))merged[key]=r;
     else if(!same(r,b))fields.push(key);
   }
+  if(local.kind==='question'&&['scope','transcription','studentWork','assetIds','effectiveConditions','temporaryAssumption','inputChangedAt'].some(k=>!same(local.payload[k],incoming.payload[k]))){merged.analysisState='stale';merged.analysisSourceHash='';for(const key of ['diagnosis','solution'])if(!(merged.userEditedFields as string[]||[]).includes(key))merged[key]='';}
   if(fields.length)return {record:local,fields};
-  return {record:{...local,payload:merged,baseRev:local.rev,rev:randomUUID(),updatedAt:new Date().toISOString()},fields};
+  return {record:{...local,payload:merged,baseRev:local.rev,mergeParents:[incoming.rev],rev:randomUUID(),updatedAt:new Date().toISOString()},fields};
 }
 export class Store {
   private constructor(readonly db:Database,readonly root:string,readonly deviceId:string){}
@@ -58,13 +62,18 @@ export class Store {
   flush(){const file=path.join(this.root,'learning.sqlite');const tmp=file+'.tmp';fs.writeFileSync(tmp,this.db.export());fs.renameSync(tmp,file);}
   get(id:string):SyncRecord|undefined {const s=this.db.prepare('SELECT data FROM records WHERE id=?');try{s.bind([id]);return s.step()?JSON.parse(s.getAsObject().data as string):undefined;}finally{s.free();}}
   history(id:string,rev:string):SyncRecord|undefined {const s=this.db.prepare('SELECT data FROM history WHERE id=? AND rev=?');try{s.bind([id,rev]);return s.step()?JSON.parse(s.getAsObject().data as string):undefined;}finally{s.free();}}
+  lineage(id:string,rev:string,limit=10){const records:SyncRecord[]=[];const seen=new Set<string>();let next=rev;while(next&&records.length<limit&&!seen.has(next)){seen.add(next);const r=this.history(id,next);if(!r)break;records.push(r);next=r.baseRev;}return {records,next:records.length===limit?next:''};}
+  remember(records:SyncRecord[]){records.forEach(assertRecord);for(const r of records.filter(r=>!this.get(r.id)?.deleted&&!this.isForgotten(r)))this.db.run('INSERT OR IGNORE INTO history VALUES(?,?,?)',[r.id,r.rev,JSON.stringify(r)]);this.flush();}
+  historyPage(id:string,after=''){if(this.get(id)?.deleted)return {records:[] as SyncRecord[],next:''};const rows=this.db.prepare('SELECT data FROM history WHERE id=? AND rev>? ORDER BY rev LIMIT 10');const records:SyncRecord[]=[];try{rows.bind([id,after]);while(rows.step())records.push(JSON.parse(rows.getAsObject().data as string));}finally{rows.free();}return {records,next:records.length===10?records.at(-1)!.rev:''};}
+  commonBase(a:SyncRecord,b:SyncRecord){const ancestors=(head:SyncRecord)=>{const found=new Map<string,SyncRecord>();const pending=[head];while(pending.length){const r=pending.shift()!;if(found.has(r.rev))continue;found.set(r.rev,r);for(const rev of [r.baseRev,...r.mergeParents||[]]){const parent=this.history(r.id,rev);if(parent)pending.push(parent);}}return found;};const left=ancestors(a);for(const [rev,r]of ancestors(b))if(left.has(rev))return r;return undefined;}
+  importDocument(hash:string,title:string,scope:string,mime:string,mode:'reuse'|'independent'|'version'='reuse',versionOf=''){const existing=this.all('document').find(r=>(r.payload.assetIds as string[]).includes(hash));if(existing&&mode==='reuse')return existing;return this.put('document',{title,scope,assetIds:[hash],mime,status:'awaiting_tablet',pages:0,processed:0,error:'',paused:false,quality:'pending',qualityNotes:[],versionOf:mode==='version'?versionOf:''});}
   all(kind?:Kind,includeDeleted=false):SyncRecord[]{const s=this.db.prepare(kind?'SELECT data FROM records WHERE kind=?':'SELECT data FROM records');const result:SyncRecord[]=[];try{if(kind)s.bind([kind]);while(s.step()){const r=JSON.parse(s.getAsObject().data as string);if(includeDeleted||!r.deleted)result.push(r);}}finally{s.free();}return result.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt));}
   heads(){return (this.db.exec('SELECT id,rev FROM records')[0]?.values||[]).map(r=>({id:String(r[0]),rev:String(r[1])}));}
-  uiRecords():SyncRecord[]{const s=this.db.prepare("SELECT data FROM records WHERE kind NOT IN ('artifact','evidence')");const records:SyncRecord[]=[];try{while(s.step()){const r=JSON.parse(s.getAsObject().data as string);if(!r.deleted)records.push(r);}}finally{s.free();}return records.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt));}
+  uiRecords():SyncRecord[]{const s=this.db.prepare("SELECT data FROM records WHERE kind NOT IN ('artifact','evidence','attempt')");const records:SyncRecord[]=[];try{while(s.step()){const r=JSON.parse(s.getAsObject().data as string);if(!r.deleted&&(r.kind!=='practice'||r.payload.day===new Date().toLocaleDateString('sv-SE',{timeZone:'Asia/Shanghai'})))records.push(r);}}finally{s.free();}return records.sort((a,b)=>b.updatedAt.localeCompare(a.updatedAt));}
   *each():Generator<SyncRecord>{const s=this.db.prepare('SELECT data FROM records');try{while(s.step())yield JSON.parse(s.getAsObject().data as string);}finally{s.free();}}
-  write(r:SyncRecord){assertRecord(r);const data=JSON.stringify(r);this.db.run('INSERT OR IGNORE INTO history VALUES(?,?,?)',[r.id,r.rev,data]);this.db.run('INSERT OR REPLACE INTO records VALUES(?,?,?,?)',[r.id,r.kind,r.rev,data]);}
+  write(r:SyncRecord){assertRecord(r);const previous=this.get(r.id);if(r.kind==='question'&&previous&&r.payload.analysisState==='stale'&&['scope','transcription','studentWork','assetIds','effectiveConditions','temporaryAssumption','inputChangedAt'].some(k=>!same(previous.payload[k],r.payload[k]))){for(const child of this.all().filter(x=>x.payload.questionId===r.id)){if(child.kind==='evidence')this.write({...child,deleted:true,baseRev:child.rev,rev:randomUUID()});else if(child.kind==='artifact')this.put('artifact',{...child.payload,status:'stale'},child.id);else if(child.kind==='note'&&child.payload.origin==='agent')this.put('note',{...child.payload,content:'',sourceHash:''},child.id);}for(const m of this.all('mastery'))if((m.payload.evidenceIds as string[]).some(id=>this.get(id)?.deleted))this.put('mastery',{...m.payload,state:'needs_evidence'},m.id);}const data=JSON.stringify(r);this.db.run('INSERT OR IGNORE INTO history VALUES(?,?,?)',[r.id,r.rev,data]);this.db.run('INSERT OR REPLACE INTO records VALUES(?,?,?,?)',[r.id,r.kind,r.rev,data]);}
   put(kind:Kind,payload:object,id=randomUUID() as string){const old=this.get(id);if(old?.deleted)throw new Error('已删除记录不能直接恢复');const r:SyncRecord={id,kind,payload:payload as Record<string,unknown>,baseRev:old?.rev||'',rev:randomUUID(),deleted:false,updatedAt:new Date().toISOString(),deviceId:this.deviceId};this.write(r);this.flush();return r;}
-  edit(id:string,changes:Record<string,unknown>){const r=this.get(id);if(!r)throw new Error('记录不存在');const p={...r.payload,...changes};if(r.kind==='memory'&&changes.value!==undefined){p.origin='explicit';p.confidence=1;p.observedAt=new Date().toISOString();}if(r.kind==='question'){if(changes.classification!==undefined)p.classificationOrigin='user';p.userEditedFields=[...new Set([...(r.payload.userEditedFields as string[]||[]),...Object.keys(changes)])];}return this.put(r.kind,p,id);}
+  edit(id:string,changes:Record<string,unknown>){const r=this.get(id);if(!r)throw new Error('记录不存在');const p={...r.payload,...changes};if(r.kind==='memory'&&changes.value!==undefined){p.origin='explicit';p.confidence=1;p.observedAt=new Date().toISOString();}if(r.kind==='note'&&changes.content!==undefined){p.origin='user';p.sourceHash='';}if(r.kind==='question'){if(changes.classification!==undefined)p.classificationOrigin='user';if(changes.scope!==undefined)p.scopeOrigin='user';if(changes.effectiveConditions!==undefined){p.conditionsOrigin='user';p.conditionSourceIds=[];}p.userEditedFields=[...new Set([...(r.payload.userEditedFields as string[]||[]),...Object.keys(changes)])];}if(r.kind==='question'&&['scope','transcription','studentWork','assetIds','effectiveConditions'].some(k=>k in changes&&!same(r.payload[k],changes[k]))){p.inputChangedAt=new Date().toISOString();p.analysisState='stale';p.analysisSourceHash='';for(const k of ['diagnosis','solution'])if(!(r.payload.userEditedFields as string[]||[]).includes(k)&&!(k in changes))p[k]='';for(const child of this.all().filter(x=>x.payload.questionId===id)){if(child.kind==='evidence')this.write({...child,deleted:true,baseRev:child.rev,rev:randomUUID()});else if(child.kind==='artifact')this.put('artifact',{...child.payload,status:'stale'},child.id);else if(child.kind==='note'&&child.payload.origin==='agent')this.put('note',{...child.payload,content:'',sourceHash:''},child.id);}for(const m of this.all('mastery'))if((m.payload.evidenceIds as string[]).some(id=>this.get(id)?.deleted))this.put('mastery',{...m.payload,state:'needs_evidence'},m.id);}return this.put(r.kind,p,id);}
   private parentDeleted(r:SyncRecord){return [r.payload.questionId,r.payload.documentId].some(id=>typeof id==='string'&&this.get(id)?.deleted);}
   private cascadeDeleted(){for(const r of this.all())if(this.parentDeleted(r))this.write({...r,deleted:true,baseRev:r.rev,rev:randomUUID(),updatedAt:new Date().toISOString(),deviceId:this.deviceId});}
   delete(id:string){const r=this.get(id);if(!r||!['question','document'].includes(r.kind))throw new Error('只能删除题目或资料');this.db.run('BEGIN');try{if(!r.deleted)this.write({...r,deleted:true,baseRev:r.rev,rev:randomUUID(),updatedAt:new Date().toISOString(),deviceId:this.deviceId});this.cascadeDeleted();for(const c of this.conflicts())if(this.get(c.recordId)?.deleted)this.db.run('DELETE FROM conflicts WHERE id=?',[c.id]);this.db.run('COMMIT');this.flush();}catch(e){this.db.run('ROLLBACK');throw e;}}
@@ -78,9 +87,9 @@ export class Store {
         const local=this.get(incoming.id);
         let r=incoming;
         if(this.isForgotten(incoming)||this.parentDeleted(incoming))r={...incoming,deleted:true,rev:local?.deleted?local.rev:randomUUID()};
-        const result=local?mergeRecords(local,r,this.history(local.id,r.baseRev)):{record:r,fields:[]};
+        const result=local?mergeRecords(local,r,this.commonBase(local,r)):{record:r,fields:[]};
         if(result.fields.length){const c={id:randomUUID(),recordId:r.id,local:local!,incoming:r,fields:result.fields};this.db.run('INSERT INTO conflicts VALUES(?,?)',[c.id,JSON.stringify(c)]);conflicts.push(c);}
-        else {this.write(r);this.write(result.record);accepted.push(result.record);}
+        else {this.db.run('INSERT OR IGNORE INTO history VALUES(?,?,?)',[r.id,r.rev,JSON.stringify(r)]);this.write(result.record);accepted.push(result.record);}
       }
       // A forget rule may arrive after a memory in another synchronization batch.
       for(const m of this.all('memory'))if(this.isForgotten(m))this.write({...m,deleted:true,baseRev:m.rev,rev:randomUUID()});
@@ -90,7 +99,7 @@ export class Store {
     }catch(e){this.db.run('ROLLBACK');throw e;}
   }
   conflicts():Conflict[]{return (this.db.exec('SELECT data FROM conflicts')[0]?.values||[]).map(r=>JSON.parse(String(r[0])));}
-  resolve(id:string,side:'local'|'incoming'){const c=this.conflicts().find(c=>c.id===id);if(!c)throw new Error('冲突已处理');const chosen=c[side];if(this.isForgotten(chosen)||this.get(chosen.id)?.deleted||this.parentDeleted(chosen))throw new Error('已删除或遗忘内容不能恢复');const old=this.get(chosen.id);const r={...chosen,baseRev:old?.rev||'',rev:randomUUID(),updatedAt:new Date().toISOString(),deviceId:this.deviceId};this.write(r);this.db.run('DELETE FROM conflicts WHERE id=?',[id]);this.flush();return r;}
+  resolve(id:string,side:'local'|'incoming'){const c=this.conflicts().find(c=>c.id===id);if(!c)throw new Error('冲突已处理');const chosen=c[side];if(this.isForgotten(chosen)||this.get(chosen.id)?.deleted||this.parentDeleted(chosen))throw new Error('已删除或遗忘内容不能恢复');const old=this.get(chosen.id);const r={...chosen,baseRev:old?.rev||'',mergeParents:[c.local.rev,c.incoming.rev].filter(rev=>rev!==old?.rev),rev:randomUUID(),updatedAt:new Date().toISOString(),deviceId:this.deviceId};this.write(r);this.db.run('DELETE FROM conflicts WHERE id=?',[id]);this.flush();return r;}
   local(key:string,value?:string){if(value!==undefined){this.db.run('INSERT OR REPLACE INTO local_settings VALUES(?,?)',[key,value]);this.flush();return value;}const s=this.db.prepare('SELECT value FROM local_settings WHERE key=?');try{s.bind([key]);return s.step()?String(s.getAsObject().value):undefined;}finally{s.free();}}
   assetPath(hash:string){if(!/^[a-f0-9]{64}$/.test(hash))throw new Error('附件标识不合法');return path.join(this.root,'assets',hash);}
   addAsset(bytes:Buffer){const hash=createHash('sha256').update(bytes).digest('hex');const file=this.assetPath(hash);if(!fs.existsSync(file))fs.writeFileSync(file,bytes);return hash;}

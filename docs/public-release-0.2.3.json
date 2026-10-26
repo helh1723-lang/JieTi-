@@ -1,0 +1,24 @@
+{
+  "version": "0.2.3",
+  "versionCode": 13,
+  "package": "cn.jieti",
+  "variant": "tablet",
+  "debuggable": false,
+  "r8": true,
+  "resourceShrinking": true,
+  "signing": "Android Debug certificate; personal build, not store production signing",
+  "jvmTests": 40,
+  "nodeTests": 30,
+  "lint": "PASS",
+  "emulatorInstallLaunchAndCourseSwitching": "PASS",
+  "publicApkBuiltFromSanitizedSource": true,
+  "privacyScan": "PASS",
+  "rawDiagnosticsPublished": false,
+  "apkBytes": 21361585,
+  "apkSha256": "d38c640f2beae1d81db90287606e87a5f0de7b9f5ad007cbd044a670c1c239c8",
+  "limitations": [
+    "no sustained public-APK physical-tablet stress validation",
+    "online model correctness not revalidated",
+    "app-specific Baseline Profile not generated"
+  ]
+}

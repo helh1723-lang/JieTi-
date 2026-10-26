@@ -15,7 +15,7 @@ export function renderMarkdown(source:string):string {
   if(node.parentElement?.closest('pre,code'))continue;
   const matches=[...node.data.matchAll(/JIETIMATHTOKENX*\d+END/g)].filter(m=>byToken.has(m[0]));if(!matches.length)continue;
   const fragment=document.createDocumentFragment();let from=0;
-  for(const m of matches){fragment.append(node.data.slice(from,m.index));const p=byToken.get(m[0])!;const span=document.createElement(p.display?'div':'span');span.className=p.display?'math-block':'math-inline';span.innerHTML=katex.renderToString(p.source,{displayMode:p.display,throwOnError:false,trust:false,strict:'ignore',maxExpand:1000});fragment.append(span);from=m.index!+m[0].length;}
+  for(const m of matches){fragment.append(node.data.slice(from,m.index));const p=byToken.get(m[0])!;const span=document.createElement('span');span.className=p.display?'math-block':'math-inline';span.innerHTML=katex.renderToString(p.source,{displayMode:p.display,throwOnError:false,trust:false,strict:'ignore',maxExpand:1000});fragment.append(span);from=m.index!+m[0].length;}
   fragment.append(node.data.slice(from));node.replaceWith(fragment);
  }
  return template.innerHTML;

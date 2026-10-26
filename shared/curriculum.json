@@ -1,0 +1,1946 @@
+{
+  "version": "courses-2026-10-25-v2",
+  "chapters": [
+    {
+      "id": "signals-0",
+      "scope": "signals",
+      "number": "00",
+      "title": "数学基础",
+      "source": "数学基础知识.pdf",
+      "availability": "lecture",
+      "goal": "复数与欧拉公式、三角恒等式、常用级数与求和。",
+      "topics": [
+        {
+          "id": "0.1",
+          "title": "三角恒等式",
+          "aliases": [
+            "三角恒等式"
+          ],
+          "page": 1
+        },
+        {
+          "id": "0.2",
+          "title": "常用级数与数列求和",
+          "aliases": [
+            "常用级数与数列求和"
+          ],
+          "page": 2
+        },
+        {
+          "id": "0.3",
+          "title": "复数与欧拉公式",
+          "aliases": [
+            "复数与欧拉公式",
+            "欧拉公式",
+            "复数"
+          ],
+          "page": 3
+        }
+      ]
+    },
+    {
+      "id": "signals-1",
+      "scope": "signals",
+      "number": "01",
+      "title": "信号与系统的基本概念",
+      "source": "第一章讲义.pdf",
+      "availability": "lecture",
+      "goal": "分清信号类型，掌握冲激、变换和系统性质判断。",
+      "topics": [
+        {
+          "id": "1.1",
+          "title": "信号的概念",
+          "aliases": [],
+          "page": 1
+        },
+        {
+          "id": "1.2",
+          "title": "信号的分类",
+          "aliases": [
+            "信号分类",
+            "周期信号",
+            "能量信号",
+            "功率信号",
+            "奇偶信号"
+          ],
+          "page": 2
+        },
+        {
+          "id": "1.3",
+          "title": "常见的信号",
+          "aliases": [
+            "常见信号",
+            "阶跃信号",
+            "复指数信号"
+          ],
+          "page": 10
+        },
+        {
+          "id": "1.4",
+          "title": "冲激信号相关性质",
+          "aliases": [
+            "冲激信号",
+            "冲激函数",
+            "抽样性质"
+          ],
+          "page": 14
+        },
+        {
+          "id": "1.5",
+          "title": "信号的自变量变换",
+          "aliases": [
+            "信号平移",
+            "信号反转",
+            "尺度变换"
+          ],
+          "page": 16
+        },
+        {
+          "id": "1.6",
+          "title": "信号的基本运算",
+          "aliases": [],
+          "page": 20
+        },
+        {
+          "id": "1.7",
+          "title": "系统",
+          "aliases": [],
+          "page": 24
+        },
+        {
+          "id": "1.8",
+          "title": "系统的基本性质",
+          "aliases": [
+            "系统性质",
+            "线性时不变系统",
+            "因果性",
+            "稳定性",
+            "时不变性"
+          ],
+          "page": 26
+        }
+      ]
+    },
+    {
+      "id": "signals-2",
+      "scope": "signals",
+      "number": "02",
+      "title": "线性时不变系统的系统描述和系统响应",
+      "source": "第二章讲义.pdf",
+      "availability": "lecture",
+      "goal": "串联系统描述、零输入/零状态响应与卷积计算。",
+      "topics": [
+        {
+          "id": "2.1",
+          "title": "离散时间系统的差分方程描述",
+          "aliases": [
+            "差分方程",
+            "离散零输入响应",
+            "离散零状态响应"
+          ],
+          "page": 1
+        },
+        {
+          "id": "2.2",
+          "title": "卷积和与系统响应",
+          "aliases": [
+            "卷积和",
+            "离散卷积"
+          ],
+          "page": 3
+        },
+        {
+          "id": "2.3",
+          "title": "连续时间系统的微分方程描述",
+          "aliases": [
+            "微分方程",
+            "连续零输入响应",
+            "连续零状态响应"
+          ],
+          "page": 6
+        },
+        {
+          "id": "2.4",
+          "title": "卷积积分与系统响应",
+          "aliases": [
+            "卷积积分",
+            "连续卷积"
+          ],
+          "page": 9
+        },
+        {
+          "id": "2.5",
+          "title": "卷积性质",
+          "aliases": [
+            "卷积性质"
+          ],
+          "page": 13
+        },
+        {
+          "id": "2.6",
+          "title": "冲激响应和LTI系统特性",
+          "aliases": [
+            "冲激响应",
+            "LTI系统特性"
+          ],
+          "page": 17
+        },
+        {
+          "id": "2.7",
+          "title": "相关函数",
+          "aliases": [
+            "相关函数",
+            "自相关",
+            "互相关"
+          ],
+          "page": 19
+        }
+      ]
+    },
+    {
+      "id": "signals-3",
+      "scope": "signals",
+      "number": "03",
+      "title": "连续时间信号的傅里叶变换",
+      "source": "第三章讲义.pdf",
+      "availability": "lecture",
+      "goal": "从级数到变换，理解变换性质与时频对应。",
+      "topics": [
+        {
+          "id": "3.1",
+          "title": "复指数通过LTI系统的响应",
+          "aliases": [],
+          "page": 2
+        },
+        {
+          "id": "3.2",
+          "title": "傅里叶级数",
+          "aliases": [
+            "连续傅里叶级数",
+            "傅里叶级数",
+            "FS"
+          ],
+          "page": 3
+        },
+        {
+          "id": "3.3",
+          "title": "傅里叶级数的性质",
+          "aliases": [
+            "傅里叶级数性质"
+          ],
+          "page": 8
+        },
+        {
+          "id": "3.4",
+          "title": "傅里叶变换",
+          "aliases": [
+            "连续傅里叶变换",
+            "傅里叶变换",
+            "CTFT"
+          ],
+          "page": 17
+        },
+        {
+          "id": "3.5",
+          "title": "傅里叶变换的性质",
+          "aliases": [
+            "傅里叶变换性质",
+            "频移性质",
+            "时移性质",
+            "帕塞瓦尔"
+          ],
+          "page": 23
+        },
+        {
+          "id": "3.6",
+          "title": "周期信号的傅里叶变换",
+          "aliases": [
+            "周期信号傅里叶变换"
+          ],
+          "page": 35
+        }
+      ]
+    },
+    {
+      "id": "signals-4",
+      "scope": "signals",
+      "number": "04",
+      "title": "系统的傅里叶分析和调制解调",
+      "source": "第四章讲义.pdf",
+      "availability": "lecture",
+      "goal": "把频率响应、滤波、调制与采样连成完整链条。",
+      "topics": [
+        {
+          "id": "4.1",
+          "title": "LTI连续时间系统的频率响应",
+          "aliases": [
+            "连续系统频率响应",
+            "频率响应",
+            "无失真传输"
+          ],
+          "page": 1
+        },
+        {
+          "id": "4.2",
+          "title": "滤波和理想滤波器",
+          "aliases": [
+            "理想滤波器",
+            "滤波"
+          ],
+          "page": 4
+        },
+        {
+          "id": "4.3",
+          "title": "幅度调制和解调",
+          "aliases": [
+            "调制",
+            "解调",
+            "幅度调制"
+          ],
+          "page": 7
+        },
+        {
+          "id": "4.4",
+          "title": "采样和采样定理",
+          "aliases": [
+            "采样定理",
+            "采样",
+            "抽样定理",
+            "奈奎斯特"
+          ],
+          "page": 10
+        },
+        {
+          "id": "4.5",
+          "title": "希尔伯特变换",
+          "aliases": [
+            "希尔伯特变换"
+          ],
+          "page": 19
+        }
+      ]
+    },
+    {
+      "id": "signals-5",
+      "scope": "signals",
+      "number": "05",
+      "title": "拉普拉斯变换",
+      "source": "第五章讲义.pdf",
+      "availability": "lecture",
+      "goal": "结合收敛域与极零点，分析连续系统响应。",
+      "topics": [
+        {
+          "id": "5.1",
+          "title": "拉普拉斯变换的定义",
+          "aliases": [
+            "拉普拉斯变换",
+            "Laplace"
+          ],
+          "page": 1
+        },
+        {
+          "id": "5.2",
+          "title": "拉普拉斯变换的收敛域",
+          "aliases": [
+            "拉普拉斯收敛域",
+            "s域收敛域",
+            "收敛域"
+          ],
+          "page": 2
+        },
+        {
+          "id": "5.3",
+          "title": "拉普拉斯变换的性质",
+          "aliases": [
+            "拉普拉斯变换性质"
+          ],
+          "page": 5
+        },
+        {
+          "id": "5.4",
+          "title": "拉普拉斯反变换方法",
+          "aliases": [
+            "拉普拉斯逆变换",
+            "拉普拉斯反变换"
+          ],
+          "page": 11
+        },
+        {
+          "id": "5.5",
+          "title": "LTI系统的s域描述",
+          "aliases": [
+            "s域系统函数",
+            "连续系统极零点"
+          ],
+          "page": 13
+        },
+        {
+          "id": "5.6",
+          "title": "单边拉普拉斯变换",
+          "aliases": [
+            "单边拉普拉斯变换"
+          ],
+          "page": 18
+        },
+        {
+          "id": "5.7",
+          "title": "拉普拉斯变换求系统响应",
+          "aliases": [
+            "拉普拉斯求响应"
+          ],
+          "page": 20
+        },
+        {
+          "id": "5.8",
+          "title": "LTI系统的框图表示方法",
+          "aliases": [
+            "连续系统框图"
+          ],
+          "page": 22
+        }
+      ]
+    },
+    {
+      "id": "signals-6",
+      "scope": "signals",
+      "number": "06",
+      "title": "离散时间信号的傅里叶变换",
+      "source": "1-5章讲义.pdf",
+      "availability": "outline",
+      "goal": "区分离散时间频谱的周期性、采样与 DFT。",
+      "topics": [
+        {
+          "id": "6.1",
+          "title": "复指数通过LTI系统的响应",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "6.2",
+          "title": "离散时间傅里叶级数",
+          "aliases": [
+            "离散傅里叶级数",
+            "DFS"
+          ],
+          "page": 0
+        },
+        {
+          "id": "6.3",
+          "title": "离散时间傅里叶变换",
+          "aliases": [
+            "离散时间傅里叶变换",
+            "离散傅里叶变换DTFT",
+            "DTFT"
+          ],
+          "page": 0
+        },
+        {
+          "id": "6.4",
+          "title": "离散时间傅里叶变换的性质",
+          "aliases": [
+            "DTFT性质"
+          ],
+          "page": 0
+        },
+        {
+          "id": "6.5",
+          "title": "LTI离散时间系统的频率响应和滤波器",
+          "aliases": [
+            "离散系统频率响应"
+          ],
+          "page": 0
+        },
+        {
+          "id": "6.6",
+          "title": "连续时间信号离散化",
+          "aliases": [
+            "连续时间信号离散化"
+          ],
+          "page": 0
+        },
+        {
+          "id": "6.7",
+          "title": "离散傅里叶变换(DFT)",
+          "aliases": [
+            "DFT",
+            "离散傅里叶变换"
+          ],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "signals-7",
+      "scope": "signals",
+      "number": "07",
+      "title": "Z 变换",
+      "source": "第七章讲义.pdf",
+      "availability": "lecture",
+      "goal": "结合收敛域与系统函数，求解离散系统响应。",
+      "topics": [
+        {
+          "id": "7.1",
+          "title": "Z变换定义",
+          "aliases": [
+            "Z变换"
+          ],
+          "page": 1
+        },
+        {
+          "id": "7.2",
+          "title": "收敛域",
+          "aliases": [
+            "Z变换收敛域",
+            "z域收敛域",
+            "收敛域"
+          ],
+          "page": 2
+        },
+        {
+          "id": "7.3",
+          "title": "Z变换性质",
+          "aliases": [
+            "Z变换性质"
+          ],
+          "page": 5
+        },
+        {
+          "id": "7.4",
+          "title": "部分分式展开",
+          "aliases": [
+            "部分分式展开",
+            "Z逆变换"
+          ],
+          "page": 10
+        },
+        {
+          "id": "7.5",
+          "title": "LTI系统的Z域描述",
+          "aliases": [
+            "z域系统函数",
+            "离散系统极零点"
+          ],
+          "page": 13
+        },
+        {
+          "id": "7.6",
+          "title": "单边Z变换",
+          "aliases": [
+            "单边Z变换"
+          ],
+          "page": 17
+        },
+        {
+          "id": "7.7",
+          "title": "Z变换求LTI离散时间系统响应",
+          "aliases": [
+            "Z变换求响应"
+          ],
+          "page": 18
+        },
+        {
+          "id": "7.8",
+          "title": "LTI系统的框图表示方法",
+          "aliases": [
+            "离散系统框图"
+          ],
+          "page": 20
+        }
+      ]
+    },
+    {
+      "id": "math-h1",
+      "scope": "math",
+      "number": "01",
+      "group": "高等数学",
+      "title": "函数、极限与连续",
+      "source": "高数强化板书（合并版） (1).pdf",
+      "availability": "lecture",
+      "startPage": 2,
+      "goal": "函数性质与图像 · 极限综合与递推数列",
+      "topics": [
+        {
+          "id": "h1.1",
+          "title": "函数性质与图像",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h1.2",
+          "title": "函数极限",
+          "aliases": [
+            "函数极限"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h1.3",
+          "title": "数列极限",
+          "aliases": [
+            "数列极限",
+            "递推数列极限"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h1.4",
+          "title": "无穷小与无穷大",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h1.5",
+          "title": "极限的四则运算与重要极限",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h1.6",
+          "title": "等价无穷小与阶的比较",
+          "aliases": [
+            "等价无穷小"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h1.7",
+          "title": "夹逼准则与单调有界准则",
+          "aliases": [
+            "夹逼定理",
+            "单调有界"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h1.8",
+          "title": "连续性与间断点",
+          "aliases": [
+            "连续与间断"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h1.9",
+          "title": "闭区间连续函数的性质",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h1.10",
+          "title": "极限综合与递推数列",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-h2",
+      "scope": "math",
+      "number": "02",
+      "group": "高等数学",
+      "title": "一元函数微分学",
+      "source": "高数强化板书（合并版） (1).pdf",
+      "availability": "lecture",
+      "startPage": 59,
+      "goal": "导数与微分的定义 · 导数的几何与物理应用",
+      "topics": [
+        {
+          "id": "h2.1",
+          "title": "导数与微分的定义",
+          "aliases": [
+            "一元函数微分",
+            "导数定义"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h2.2",
+          "title": "求导法则与隐函数求导",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h2.3",
+          "title": "高阶导数与参数方程求导",
+          "aliases": [
+            "高阶导数"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h2.4",
+          "title": "微分中值定理",
+          "aliases": [
+            "中值定理"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h2.5",
+          "title": "泰勒公式与余项",
+          "aliases": [
+            "泰勒公式"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h2.6",
+          "title": "洛必达法则",
+          "aliases": [
+            "洛必达"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h2.7",
+          "title": "单调性、极值与最值",
+          "aliases": [
+            "导数应用"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h2.8",
+          "title": "凹凸性与拐点",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h2.9",
+          "title": "渐近线与函数图像",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h2.10",
+          "title": "中值定理证明题",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h2.11",
+          "title": "导数的几何与物理应用",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-h3",
+      "scope": "math",
+      "number": "03",
+      "group": "高等数学",
+      "title": "一元函数积分学",
+      "source": "高数强化板书（合并版） (1).pdf",
+      "availability": "lecture",
+      "startPage": 142,
+      "goal": "不定积分概念与基本公式 · 积分不等式与积分证明",
+      "topics": [
+        {
+          "id": "h3.1",
+          "title": "不定积分概念与基本公式",
+          "aliases": [
+            "不定积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h3.2",
+          "title": "换元积分法",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h3.3",
+          "title": "分部积分法",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h3.4",
+          "title": "有理函数与三角函数积分",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h3.5",
+          "title": "定积分的定义与性质",
+          "aliases": [
+            "定积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h3.6",
+          "title": "牛顿莱布尼茨公式",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h3.7",
+          "title": "变限积分与积分上限函数",
+          "aliases": [
+            "变限积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h3.8",
+          "title": "反常积分与敛散性",
+          "aliases": [
+            "反常积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h3.9",
+          "title": "定积分的几何与物理应用",
+          "aliases": [
+            "定积分应用"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h3.10",
+          "title": "积分不等式与积分证明",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-h4",
+      "scope": "math",
+      "number": "04",
+      "group": "高等数学",
+      "title": "多元函数微分学",
+      "source": "高数强化板书（合并版） (1).pdf",
+      "availability": "lecture",
+      "startPage": 236,
+      "goal": "多元函数极限与连续 · 条件极值与拉格朗日乘数法",
+      "topics": [
+        {
+          "id": "h4.1",
+          "title": "多元函数极限与连续",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h4.2",
+          "title": "偏导数与全微分",
+          "aliases": [
+            "多元函数微分",
+            "偏导数",
+            "全微分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h4.3",
+          "title": "可微、可偏导与连续的关系",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h4.4",
+          "title": "多元复合函数求导",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h4.5",
+          "title": "隐函数与隐函数组求导",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h4.6",
+          "title": "高阶偏导数",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h4.7",
+          "title": "无条件极值",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h4.8",
+          "title": "条件极值与拉格朗日乘数法",
+          "aliases": [
+            "条件极值",
+            "拉格朗日乘数"
+          ],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-h5",
+      "scope": "math",
+      "number": "05",
+      "group": "高等数学",
+      "title": "二重积分",
+      "source": "高数强化板书（合并版） (1).pdf",
+      "availability": "lecture",
+      "startPage": 276,
+      "goal": "二重积分的定义与性质 · 二重积分综合与应用",
+      "topics": [
+        {
+          "id": "h5.1",
+          "title": "二重积分的定义与性质",
+          "aliases": [
+            "二重积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h5.2",
+          "title": "直角坐标下的二重积分",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h5.3",
+          "title": "极坐标下的二重积分",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h5.4",
+          "title": "交换积分次序",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h5.5",
+          "title": "二重积分综合与应用",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-h6",
+      "scope": "math",
+      "number": "06",
+      "group": "高等数学",
+      "title": "常微分方程",
+      "source": "高数强化板书（合并版） (1).pdf",
+      "availability": "lecture",
+      "startPage": 302,
+      "goal": "微分方程与初值问题 · 微分方程的几何与物理应用",
+      "topics": [
+        {
+          "id": "h6.1",
+          "title": "微分方程与初值问题",
+          "aliases": [
+            "微分方程",
+            "常微分方程"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h6.2",
+          "title": "可分离变量与齐次方程",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h6.3",
+          "title": "一阶线性微分方程",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h6.4",
+          "title": "伯努利方程",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h6.5",
+          "title": "可降阶的高阶方程",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h6.6",
+          "title": "二阶常系数线性方程",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h6.7",
+          "title": "微分方程的几何与物理应用",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-h7",
+      "scope": "math",
+      "number": "07",
+      "group": "高等数学",
+      "title": "无穷级数",
+      "source": "高数强化板书（合并版） (1).pdf",
+      "availability": "lecture",
+      "startPage": 330,
+      "goal": "数项级数与收敛必要条件 · 正弦级数、余弦级数与周期延拓",
+      "topics": [
+        {
+          "id": "h7.1",
+          "title": "数项级数与收敛必要条件",
+          "aliases": [
+            "数项级数"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h7.2",
+          "title": "正项级数及审敛法",
+          "aliases": [
+            "正项级数"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h7.3",
+          "title": "交错级数与莱布尼茨判别法",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h7.4",
+          "title": "绝对收敛与条件收敛",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h7.5",
+          "title": "幂级数的收敛半径与收敛域",
+          "aliases": [
+            "幂级数",
+            "收敛半径"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h7.6",
+          "title": "幂级数的运算与和函数",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h7.7",
+          "title": "函数的幂级数展开",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h7.8",
+          "title": "傅里叶级数与狄利克雷条件",
+          "aliases": [
+            "傅里叶级数",
+            "傅立叶级数"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h7.9",
+          "title": "正弦级数、余弦级数与周期延拓",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-h8",
+      "scope": "math",
+      "number": "08",
+      "group": "高等数学",
+      "title": "空间解析几何与多元微分的几何应用",
+      "source": "2026考研数学Kira-高等数学通关讲义-基础篇 -张翀.pdf",
+      "availability": "lecture",
+      "startPage": 212,
+      "goal": "空间向量及其运算 · 梯度及其应用",
+      "topics": [
+        {
+          "id": "h8.1",
+          "title": "空间向量及其运算",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h8.2",
+          "title": "空间直线与平面",
+          "aliases": [
+            "空间解析几何",
+            "空间直线",
+            "空间平面"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h8.3",
+          "title": "常见空间曲面与曲线",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h8.4",
+          "title": "空间曲线的切线与法平面",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h8.5",
+          "title": "曲面的切平面与法线",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h8.6",
+          "title": "方向导数",
+          "aliases": [
+            "方向导数"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h8.7",
+          "title": "梯度及其应用",
+          "aliases": [
+            "梯度"
+          ],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-h9",
+      "scope": "math",
+      "number": "09",
+      "group": "高等数学",
+      "title": "三重积分、曲线积分与曲面积分",
+      "source": "2026考研数学Kira-高等数学通关讲义-基础篇 -张翀.pdf",
+      "availability": "lecture",
+      "startPage": 233,
+      "goal": "三重积分与直角坐标 · 斯托克斯公式与环流",
+      "topics": [
+        {
+          "id": "h9.1",
+          "title": "三重积分与直角坐标",
+          "aliases": [
+            "三重积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h9.2",
+          "title": "柱坐标与球坐标积分",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "h9.3",
+          "title": "第一类曲线积分",
+          "aliases": [
+            "第一类曲线积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h9.4",
+          "title": "第二类曲线积分",
+          "aliases": [
+            "第二类曲线积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h9.5",
+          "title": "格林公式与路径无关",
+          "aliases": [
+            "格林公式"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h9.6",
+          "title": "第一类曲面积分",
+          "aliases": [
+            "第一类曲面积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h9.7",
+          "title": "第二类曲面积分",
+          "aliases": [
+            "第二类曲面积分"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h9.8",
+          "title": "高斯公式与通量",
+          "aliases": [
+            "高斯公式"
+          ],
+          "page": 0
+        },
+        {
+          "id": "h9.9",
+          "title": "斯托克斯公式与环流",
+          "aliases": [
+            "斯托克斯公式"
+          ],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-l1",
+      "scope": "math",
+      "number": "01",
+      "group": "线性代数",
+      "title": "行列式",
+      "source": "线代强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 1,
+      "goal": "行列式的定义与性质 · 克拉默法则",
+      "topics": [
+        {
+          "id": "l1.1",
+          "title": "行列式的定义与性质",
+          "aliases": [
+            "行列式"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l1.2",
+          "title": "行列式按行或列展开",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l1.3",
+          "title": "特殊行列式与计算方法",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l1.4",
+          "title": "代数余子式与伴随矩阵",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l1.5",
+          "title": "克拉默法则",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-l2",
+      "scope": "math",
+      "number": "02",
+      "group": "线性代数",
+      "title": "矩阵",
+      "source": "线代强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 20,
+      "goal": "矩阵运算与特殊矩阵 · 矩阵方程与抽象矩阵",
+      "topics": [
+        {
+          "id": "l2.1",
+          "title": "矩阵运算与特殊矩阵",
+          "aliases": [
+            "矩阵"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l2.2",
+          "title": "逆矩阵与可逆条件",
+          "aliases": [
+            "逆矩阵"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l2.3",
+          "title": "伴随矩阵及其性质",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l2.4",
+          "title": "分块矩阵",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l2.5",
+          "title": "初等变换与初等矩阵",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l2.6",
+          "title": "矩阵的秩",
+          "aliases": [
+            "矩阵秩"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l2.7",
+          "title": "矩阵方程与抽象矩阵",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-l3",
+      "scope": "math",
+      "number": "03",
+      "group": "线性代数",
+      "title": "向量组与向量空间",
+      "source": "线代强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 39,
+      "goal": "向量的线性组合与线性表示 · 过渡矩阵与坐标变换",
+      "topics": [
+        {
+          "id": "l3.1",
+          "title": "向量的线性组合与线性表示",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l3.2",
+          "title": "线性相关与线性无关",
+          "aliases": [
+            "线性相关",
+            "线性无关"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l3.3",
+          "title": "极大线性无关组与向量组的秩",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l3.4",
+          "title": "等价向量组",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l3.5",
+          "title": "向量空间、基与坐标",
+          "aliases": [
+            "向量空间"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l3.6",
+          "title": "过渡矩阵与坐标变换",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-l4",
+      "scope": "math",
+      "number": "04",
+      "group": "线性代数",
+      "title": "线性方程组",
+      "source": "线代强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 61,
+      "goal": "齐次方程组与基础解系 · 矩阵方程 AX=B 与参数讨论",
+      "topics": [
+        {
+          "id": "l4.1",
+          "title": "齐次方程组与基础解系",
+          "aliases": [
+            "基础解系"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l4.2",
+          "title": "非齐次方程组有解判定",
+          "aliases": [
+            "线性方程组"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l4.3",
+          "title": "解的结构与通解",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l4.4",
+          "title": "公共解与同解方程组",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l4.5",
+          "title": "抽象方程组与解的包含关系",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l4.6",
+          "title": "矩阵方程 AX=B 与参数讨论",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-l5",
+      "scope": "math",
+      "number": "05",
+      "group": "线性代数",
+      "title": "特征值、特征向量与相似矩阵",
+      "source": "线代强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 103,
+      "goal": "特征值与特征向量的定义和计算 · 正交矩阵与正交对角化",
+      "topics": [
+        {
+          "id": "l5.1",
+          "title": "特征值与特征向量的定义和计算",
+          "aliases": [
+            "特征值",
+            "特征向量"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l5.2",
+          "title": "特征值与特征向量的性质",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l5.3",
+          "title": "相似矩阵与相似不变量",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l5.4",
+          "title": "矩阵的相似对角化",
+          "aliases": [
+            "相似对角化"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l5.5",
+          "title": "实对称矩阵",
+          "aliases": [
+            "实对称矩阵"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l5.6",
+          "title": "正交矩阵与正交对角化",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-l6",
+      "scope": "math",
+      "number": "06",
+      "group": "线性代数",
+      "title": "二次型",
+      "source": "线代强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 115,
+      "goal": "二次型与对称矩阵 · 二次型综合与参数讨论",
+      "topics": [
+        {
+          "id": "l6.1",
+          "title": "二次型与对称矩阵",
+          "aliases": [
+            "二次型"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l6.2",
+          "title": "合同变换与惯性定理",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l6.3",
+          "title": "正交变换化二次型为标准形",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l6.4",
+          "title": "配方法与规范形",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "l6.5",
+          "title": "正定二次型与正定矩阵",
+          "aliases": [
+            "正定矩阵"
+          ],
+          "page": 0
+        },
+        {
+          "id": "l6.6",
+          "title": "二次型综合与参数讨论",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-p1",
+      "scope": "math",
+      "number": "01",
+      "group": "概率论与数理统计",
+      "title": "随机事件与概率",
+      "source": "概率强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 1,
+      "goal": "事件关系与事件运算 · 伯努利试验与二项概率",
+      "topics": [
+        {
+          "id": "p1.1",
+          "title": "事件关系与事件运算",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p1.2",
+          "title": "概率公理与古典概型",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p1.3",
+          "title": "条件概率与乘法公式",
+          "aliases": [
+            "条件概率"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p1.4",
+          "title": "全概率公式与贝叶斯公式",
+          "aliases": [
+            "贝叶斯公式",
+            "全概率公式"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p1.5",
+          "title": "事件的独立性",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p1.6",
+          "title": "伯努利试验与二项概率",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-p2",
+      "scope": "math",
+      "number": "02",
+      "group": "概率论与数理统计",
+      "title": "一维随机变量及其分布",
+      "source": "概率强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 14,
+      "goal": "随机变量与分布函数 · 离散与连续混合分布",
+      "topics": [
+        {
+          "id": "p2.1",
+          "title": "随机变量与分布函数",
+          "aliases": [
+            "分布函数"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p2.2",
+          "title": "离散型随机变量与概率分布",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p2.3",
+          "title": "连续型随机变量与概率密度",
+          "aliases": [
+            "概率密度"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p2.4",
+          "title": "二项分布与泊松分布",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p2.5",
+          "title": "均匀分布、指数分布与正态分布",
+          "aliases": [
+            "一维正态分布",
+            "指数分布"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p2.6",
+          "title": "随机变量函数的分布",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p2.7",
+          "title": "离散与连续混合分布",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-p3",
+      "scope": "math",
+      "number": "03",
+      "group": "概率论与数理统计",
+      "title": "多维随机变量及其分布",
+      "source": "概率强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 42,
+      "goal": "联合分布函数与联合分布律 · 二维正态分布",
+      "topics": [
+        {
+          "id": "p3.1",
+          "title": "联合分布函数与联合分布律",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p3.2",
+          "title": "联合概率密度与取值区域",
+          "aliases": [
+            "联合密度"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p3.3",
+          "title": "边缘分布",
+          "aliases": [
+            "边缘分布"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p3.4",
+          "title": "条件分布",
+          "aliases": [
+            "条件分布"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p3.5",
+          "title": "随机变量的独立性",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p3.6",
+          "title": "多维随机变量函数的分布",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p3.7",
+          "title": "二维正态分布",
+          "aliases": [
+            "二维正态分布"
+          ],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-p4",
+      "scope": "math",
+      "number": "04",
+      "group": "概率论与数理统计",
+      "title": "随机变量的数字特征",
+      "source": "概率强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 78,
+      "goal": "数学期望 · 数字特征综合与不等式",
+      "topics": [
+        {
+          "id": "p4.1",
+          "title": "数学期望",
+          "aliases": [
+            "数学期望",
+            "期望"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p4.2",
+          "title": "随机变量函数的数学期望",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p4.3",
+          "title": "方差与标准差",
+          "aliases": [
+            "方差"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p4.4",
+          "title": "协方差与相关系数",
+          "aliases": [
+            "协方差",
+            "相关系数"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p4.5",
+          "title": "矩与数字特征的性质",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p4.6",
+          "title": "独立、不相关与正态分布",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p4.7",
+          "title": "数字特征综合与不等式",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-p5",
+      "scope": "math",
+      "number": "05",
+      "group": "概率论与数理统计",
+      "title": "大数定律与中心极限定理",
+      "source": "概率强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 107,
+      "goal": "切比雪夫不等式 · 中心极限定理与正态近似",
+      "topics": [
+        {
+          "id": "p5.1",
+          "title": "切比雪夫不等式",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p5.2",
+          "title": "常用大数定律",
+          "aliases": [
+            "大数定律"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p5.3",
+          "title": "中心极限定理与正态近似",
+          "aliases": [
+            "中心极限定理"
+          ],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-p6",
+      "scope": "math",
+      "number": "06",
+      "group": "概率论与数理统计",
+      "title": "数理统计与抽样分布",
+      "source": "概率强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 116,
+      "goal": "总体、样本与统计量 · 正态总体的抽样分布",
+      "topics": [
+        {
+          "id": "p6.1",
+          "title": "总体、样本与统计量",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p6.2",
+          "title": "经验分布与次序统计量",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p6.3",
+          "title": "样本均值与样本方差",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p6.4",
+          "title": "卡方分布、t 分布与 F 分布",
+          "aliases": [
+            "卡方分布",
+            "t分布",
+            "F分布"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p6.5",
+          "title": "正态总体的抽样分布",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-p7",
+      "scope": "math",
+      "number": "07",
+      "group": "概率论与数理统计",
+      "title": "参数估计",
+      "source": "概率强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 116,
+      "goal": "矩估计 · 两个正态总体的区间估计",
+      "topics": [
+        {
+          "id": "p7.1",
+          "title": "矩估计",
+          "aliases": [
+            "矩估计"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p7.2",
+          "title": "最大似然估计",
+          "aliases": [
+            "最大似然估计"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p7.3",
+          "title": "无偏性、有效性与一致性",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p7.4",
+          "title": "单个正态总体的区间估计",
+          "aliases": [
+            "区间估计"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p7.5",
+          "title": "两个正态总体的区间估计",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    },
+    {
+      "id": "math-p8",
+      "scope": "math",
+      "number": "08",
+      "group": "概率论与数理统计",
+      "title": "假设检验",
+      "source": "概率强化板书（合并版）.pdf",
+      "availability": "lecture",
+      "startPage": 136,
+      "goal": "原假设、备择假设与两类错误 · 两个正态总体的参数检验",
+      "topics": [
+        {
+          "id": "p8.1",
+          "title": "原假设、备择假设与两类错误",
+          "aliases": [
+            "假设检验"
+          ],
+          "page": 0
+        },
+        {
+          "id": "p8.2",
+          "title": "显著性水平与拒绝域",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p8.3",
+          "title": "单个正态总体均值检验",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p8.4",
+          "title": "单个正态总体方差检验",
+          "aliases": [],
+          "page": 0
+        },
+        {
+          "id": "p8.5",
+          "title": "两个正态总体的参数检验",
+          "aliases": [],
+          "page": 0
+        }
+      ]
+    }
+  ]
+}

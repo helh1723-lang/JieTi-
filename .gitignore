@@ -26,3 +26,5 @@ __pycache__/
 *.apk
 *.aab
 *.exe
+docs/evidence/
+*.perfetto-trace

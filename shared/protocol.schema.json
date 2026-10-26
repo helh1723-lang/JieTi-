@@ -261,6 +261,39 @@
           "items": {
             "type": "string"
           }
+        },
+        "scopeOrigin": {
+          "type": "string"
+        },
+        "effectiveConditions": {
+          "type": "string"
+        },
+        "conditionSourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "conditionsOrigin": {
+          "type": "string"
+        },
+        "temporaryAssumption": {
+          "type": "string"
+        },
+        "assumptionSourceId": {
+          "type": "string"
+        },
+        "analysisSourceHash": {
+          "type": "string"
+        },
+        "analysisState": {
+          "type": "string"
+        },
+        "inputChangedAt": {
+          "type": "string"
+        },
+        "practiceId": {
+          "type": "string"
         }
       }
     },
@@ -303,6 +336,32 @@
         },
         "policyId": {
           "type": "string"
+        },
+        "completion": {
+          "type": "string",
+          "enum": [
+            "",
+            "complete",
+            "truncated",
+            "interrupted",
+            "filtered",
+            "tool_error"
+          ]
+        },
+        "focusAssetId": {
+          "type": "string"
+        },
+        "focusRect": {
+          "type": "string"
+        },
+        "focusSourceId": {
+          "type": "string"
+        },
+        "sourceHash": {
+          "type": "string"
+        },
+        "retrievalScope": {
+          "type": "string"
         }
       }
     },
@@ -342,6 +401,9 @@
           "items": {
             "type": "string"
           }
+        },
+        "sourceHash": {
+          "type": "string"
         }
       }
     },
@@ -392,6 +454,21 @@
         },
         "supplementalText": {
           "type": "string"
+        },
+        "quality": {
+          "type": "string"
+        },
+        "qualityNotes": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "versionOf": {
+          "type": "string"
+        },
+        "visualProcessed": {
+          "type": "integer"
         }
       }
     },
@@ -416,6 +493,10 @@
         },
         "questionId": {
           "type": "string"
+        },
+        "sourceMessageId": {
+          "type": "string",
+          "maxLength": 160
         }
       }
     },
@@ -451,6 +532,12 @@
           "items": {
             "type": "string"
           }
+        },
+        "sourceMessageId": {
+          "type": "string"
+        },
+        "contextHash": {
+          "type": "string"
         }
       }
     },
@@ -466,6 +553,12 @@
           "type": "string"
         },
         "content": {
+          "type": "string"
+        },
+        "origin": {
+          "type": "string"
+        },
+        "sourceHash": {
           "type": "string"
         }
       }
@@ -483,6 +576,233 @@
         },
         "value": {
           "type": "string"
+        }
+      }
+    },
+    "LearningPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "scope",
+        "goal",
+        "summary",
+        "weaknesses",
+        "steps",
+        "sourceIds",
+        "evidenceHash",
+        "generatedAt",
+        "status",
+        "dailyMinutes"
+      ],
+      "properties": {
+        "scope": {
+          "type": "string"
+        },
+        "goal": {
+          "type": "string"
+        },
+        "summary": {
+          "type": "string"
+        },
+        "weaknesses": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "steps": {
+          "type": "array",
+          "items": {
+            "type": "object"
+          }
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "evidenceHash": {
+          "type": "string"
+        },
+        "generatedAt": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "dailyMinutes": {
+          "type": "integer"
+        }
+      }
+    },
+    "PracticeItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "day",
+        "slot",
+        "scope",
+        "concept",
+        "stem",
+        "referenceAnswer",
+        "sourceType",
+        "sourceTitle",
+        "sourceUrl",
+        "sourceQuote",
+        "documentId",
+        "page",
+        "sourceHash",
+        "examLabel",
+        "authenticity",
+        "questionId",
+        "status",
+        "helpUsed",
+        "lastOutcome",
+        "lastFeedback",
+        "lastAttemptId"
+      ],
+      "properties": {
+        "day": {
+          "type": "string"
+        },
+        "slot": {
+          "type": "integer"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "concept": {
+          "type": "string"
+        },
+        "stem": {
+          "type": "string"
+        },
+        "referenceAnswer": {
+          "type": "string"
+        },
+        "sourceType": {
+          "type": "string"
+        },
+        "sourceTitle": {
+          "type": "string"
+        },
+        "sourceUrl": {
+          "type": "string"
+        },
+        "sourceQuote": {
+          "type": "string"
+        },
+        "documentId": {
+          "type": "string"
+        },
+        "page": {
+          "type": "integer"
+        },
+        "sourceHash": {
+          "type": "string"
+        },
+        "examLabel": {
+          "type": "string"
+        },
+        "authenticity": {
+          "type": "string"
+        },
+        "questionId": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "helpUsed": {
+          "type": "boolean"
+        },
+        "lastOutcome": {
+          "type": "string"
+        },
+        "lastFeedback": {
+          "type": "string"
+        },
+        "lastAttemptId": {
+          "type": "string"
+        }
+      }
+    },
+    "PracticeAttempt": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "practiceId",
+        "questionId",
+        "scope",
+        "concept",
+        "work",
+        "independent",
+        "helpUsed",
+        "outcome",
+        "feedback",
+        "status",
+        "sourceHash",
+        "submittedAt",
+        "reviewedAt",
+        "sourceIds"
+      ],
+      "properties": {
+        "practiceId": {
+          "type": "string"
+        },
+        "questionId": {
+          "type": "string"
+        },
+        "scope": {
+          "type": "string"
+        },
+        "concept": {
+          "type": "string"
+        },
+        "work": {
+          "type": "string"
+        },
+        "independent": {
+          "type": "boolean"
+        },
+        "helpUsed": {
+          "type": "boolean"
+        },
+        "outcome": {
+          "type": "string"
+        },
+        "feedback": {
+          "type": "string"
+        },
+        "status": {
+          "type": "string"
+        },
+        "sourceHash": {
+          "type": "string"
+        },
+        "submittedAt": {
+          "type": "string"
+        },
+        "reviewedAt": {
+          "type": "string"
+        },
+        "sourceIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          }
+        },
+        "assetIds": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": []
+        },
+        "transcription": {
+          "type": "string",
+          "default": ""
         }
       }
     }
@@ -518,7 +838,10 @@
         "citation",
         "artifact",
         "note",
-        "setting"
+        "setting",
+        "plan",
+        "practice",
+        "attempt"
       ]
     },
     "rev": {
@@ -541,6 +864,14 @@
     "deviceId": {
       "type": "string",
       "maxLength": 100
+    },
+    "mergeParents": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "maxLength": 80
+      },
+      "maxItems": 2
     }
   }
 }

@@ -41,13 +41,13 @@ import java.util.concurrent.atomic.AtomicInteger
   }finally{store.db.close()}
  }
  @Test fun textPdfProcessesAllFortyPagesAndDocxWithoutRemoteEmbeddings()=runBlocking<Unit>{
-  val store=store();val library=Library(app,store,app.provider,app.settings,AtomicInteger())
+  val store=store();var visualCalls=0;val fake=object:cn.jieti.ai.Provider(app.settings){override suspend fun chat(role:String,messages:JsonArray,tools:JsonArray?,stream:Boolean,priority:Boolean,jsonMode:Boolean,onDelta:(String)->Unit):cn.jieti.ai.Turn{visualCalls++;return cn.jieti.ai.Turn("公式与图表已逐页核对；本地正文必须仍可检索。")}};val library=Library(app,store,fake,app.settings,AtomicInteger())
   try{
    com.tom_roush.pdfbox.android.PDFBoxResourceLoader.init(app)
    val bytes=java.io.ByteArrayOutputStream().use{out->com.tom_roush.pdfbox.pdmodel.PDDocument().use{pdf->repeat(40){n->val page=com.tom_roush.pdfbox.pdmodel.PDPage();pdf.addPage(page);com.tom_roush.pdfbox.pdmodel.PDPageContentStream(pdf,page).use{stream->stream.beginText();stream.setFont(com.tom_roush.pdfbox.pdmodel.font.PDType1Font.HELVETICA,12f);stream.newLineAtOffset(50f,700f);stream.showText("Synthetic course page $n: convolution support and integration interval. UniquePage$n");stream.endText()}};pdf.save(out)};out.toByteArray()}
    val hash=store.addAsset(bytes);val pdf=store.put("document",payload(Document("合成40页PDF","acceptance",listOf(hash),"pdf","queued",0,0,"",false)))
    val start=System.nanoTime();assertTrue(library.process(pdf.id));val elapsed=(System.nanoTime()-start)/1000000
-   assertEquals(40,store.get(pdf.id)!!.payload.i("processed"));assertEquals(40,store.get(pdf.id)!!.payload.i("pages"));assertEquals("ready",store.get(pdf.id)!!.payload.s("status"));assertTrue(library.search("acceptance","UniquePage31").any{it.page==32})
+   assertEquals(40,visualCalls);assertEquals(40,store.get(pdf.id)!!.payload.i("processed"));assertEquals(40,store.get(pdf.id)!!.payload.i("pages"));assertEquals("ready",store.get(pdf.id)!!.payload.s("status"));assertTrue(library.search("acceptance","UniquePage31").any{it.page==32})
    val docx=java.io.ByteArrayOutputStream().use{out->java.util.zip.ZipOutputStream(out).use{zip->zip.putNextEntry(java.util.zip.ZipEntry("word/document.xml"));zip.write("<w:document xmlns:w=\"http://schemas.openxmlformats.org/wordprocessingml/2006/main\"><w:body><w:p><w:r><w:t>拉普拉斯变换的收敛域必须包含虚轴才能得到频率响应。</w:t></w:r></w:p></w:body></w:document>".toByteArray());zip.closeEntry()};out.toByteArray()}
    val word=store.put("document",payload(Document("合成Word","word",listOf(store.addAsset(docx)),"docx","queued",0,0,"",false)))
    assertTrue(library.process(word.id));assertTrue(library.search("word","拉普拉斯收敛域").isNotEmpty())
@@ -72,7 +72,7 @@ import java.util.concurrent.atomic.AtomicInteger
  }
  @Test fun modelLearnsFromNaturalUnderstandingFeedbackAndRejectsInventedSources()=runBlocking<Unit>{
   val store=store();val foreground=AtomicInteger();var analyses=0;val memory=MemoryEngine(store)
-  val fake=object:Provider(app.settings){override suspend fun chat(role:String,messages:JsonArray,tools:JsonArray?,stream:Boolean,priority:Boolean,onDelta:(String)->Unit):Turn{
+  val fake=object:Provider(app.settings){override suspend fun chat(role:String,messages:JsonArray,tools:JsonArray?,stream:Boolean,priority:Boolean,jsonMode:Boolean,onDelta:(String)->Unit):Turn{
    analyses++;val input=wire.parseToJsonElement(messages.last().jsonObject.s("content")).jsonArray
    val user=input.last{it.jsonObject.s("role")=="user"}.jsonObject
    return Turn(buildJsonObject{putJsonArray("observations"){add(buildJsonObject{put("family","visualization");put("choice","visual");putJsonArray("evidence"){add(buildJsonObject{put("sourceId",user.s("id"));put("quote","这种解释一下就跟上了")})}});add(buildJsonObject{put("family","response_length");put("choice","concise");putJsonArray("evidence"){add(buildJsonObject{put("sourceId","invented");put("quote","不存在的用户反馈")})}})}}.toString())
@@ -85,7 +85,7 @@ import java.util.concurrent.atomic.AtomicInteger
  }
  @Test fun retryReusesUserMessageRejectsDoubleSendAndRetainsOriginalImageAfterLongHistory()=runBlocking<Unit>{
   val store=store();val foreground=AtomicInteger();var calls=0;var sent=JsonArray(emptyList());val firstStarted=CompletableDeferred<Unit>()
-  val fake=object:Provider(app.settings){override suspend fun chat(role:String,messages:JsonArray,tools:JsonArray?,stream:Boolean,priority:Boolean,onDelta:(String)->Unit):Turn{
+  val fake=object:Provider(app.settings){override suspend fun chat(role:String,messages:JsonArray,tools:JsonArray?,stream:Boolean,priority:Boolean,jsonMode:Boolean,onDelta:(String)->Unit):Turn{
    calls++;sent=messages;if(calls==1){onDelta("未完成");firstStarted.complete(Unit);awaitCancellation()};onDelta("完整回答");return Turn("完整回答")
   }}
   val library=Library(app,store,fake,app.settings,foreground);val agents=Agents(app,store,fake,MemoryEngine(store),library,foreground){_,_,_->}
@@ -102,7 +102,7 @@ import java.util.concurrent.atomic.AtomicInteger
  }
  @Test fun stoppingImmediatelyCanRetryWithoutLosingOrDuplicatingQuestion()=runBlocking<Unit>{
   val store=store();val foreground=AtomicInteger();var blocked=true
-  val fake=object:Provider(app.settings){override suspend fun chat(role:String,messages:JsonArray,tools:JsonArray?,stream:Boolean,priority:Boolean,onDelta:(String)->Unit):Turn{if(blocked)awaitCancellation();onDelta("重新回答成功");return Turn("重新回答成功")}}
+  val fake=object:Provider(app.settings){override suspend fun chat(role:String,messages:JsonArray,tools:JsonArray?,stream:Boolean,priority:Boolean,jsonMode:Boolean,onDelta:(String)->Unit):Turn{if(blocked)awaitCancellation();onDelta("重新回答成功");return Turn("重新回答成功")}}
   val agents=Agents(app,store,fake,MemoryEngine(store),Library(app,store,fake,app.settings,foreground),foreground){_,_,_->}
   try{
    repeat(4){n->blocked=true;val q=store.put("question",payload(question(store)));assertTrue(agents.send(q.id,"立即停止后的原问题 $n","检查步骤"));agents.cancel();withTimeout(10000){while(agents.state.value.busy)delay(10)};blocked=false;assertTrue(agents.retry());withTimeout(10000){while(agents.state.value.busy)delay(10)};assertEquals(1,store.messages(q.id).count{it.payload.s("role")=="user"});assertTrue(store.messages(q.id).any{it.payload.s("content")=="立即停止后的原问题 $n"})}

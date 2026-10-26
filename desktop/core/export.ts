@@ -3,7 +3,7 @@ import {Store} from './store';
 import fs from 'node:fs';
 export const escapeHtml=(v:unknown)=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]!));
 const text=(r:SyncRecord,k:string)=>String(r.payload[k]??'');
-const human=(value:string)=>({math:'数学一',signals:'858 信号与系统',global:'通用',help:'求助记录',wrong:'错题',uncertain:'待确认',explicit:'明确偏好',inferred:'交互推断',imported:'历史导入'}[value]||value);
+const human=(value:string)=>({math:'数学',signals:'信号与系统',global:'通用',help:'求助记录',wrong:'错题',uncertain:'待确认',explicit:'明确偏好',inferred:'交互推断',imported:'历史导入'}[value]||value);
 export function exportData(store:Store,ids?:string[]){
   const questions=store.all('question').filter(r=>!ids||ids.includes(r.id)).reverse();
   const memories=store.all('memory').filter(r=>r.payload.status==='active'&&!store.isForgotten(r));
@@ -18,7 +18,7 @@ export function exportData(store:Store,ids?:string[]){
     const no=String(index+1).padStart(3,'0');
     const messages=store.all('message').filter(m=>m.payload.questionId===r.id).reverse();
     md+=`\n## Q${no} ${text(r,'title')}\n\n记录ID：${r.id}\n学科：${text(r,'scope')}\n分类：${text(r,'classification')}\n\n### 原题转写\n${text(r,'transcription')||'尚未完成识别，请查看 PDF 原图。'}\n\n### 学生过程\n${text(r,'studentWork')||'无可确认的作答证据'}\n\n### 对话证据\n`;
-    for(const m of messages)md+=`\n[${text(m,'role')} / ${text(m,'mode')}] ${text(m,'content')}\n`;
+    for(const m of messages)md+=`\n[${text(m,'role')} / ${text(m,'mode')}${text(m,'completion')&&!['complete'].includes(text(m,'completion'))?' / 未完成草稿，不作为学习证据':''}] ${text(m,'content')}\n`;
     const notes=store.all('note').filter(n=>n.payload.questionId===r.id);if(notes.length)md+='\n### 用户复盘笔记\n'+notes.map(n=>text(n,'content')).join('\n\n')+'\n';
     md+=`\n### 后台诊断（AI 生成）\n${text(r,'diagnosis')||'待分析'}\n\n### 解析（AI 生成，核验状态见记录）\n${text(r,'solution')||'待分析'}\n`;
     body+=`<section class="question"><small>题目练习区</small><h2>Q${no} · ${escapeHtml(text(r,'title'))}</h2><p class="meta">${escapeHtml(human(text(r,'scope')))} / ${escapeHtml(human(text(r,'classification')))}</p>`;

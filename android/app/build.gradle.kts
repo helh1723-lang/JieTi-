@@ -9,12 +9,26 @@ plugins {
 android {
  namespace = "cn.jieti"
  compileSdk = 35
- defaultConfig { applicationId = "cn.jieti"; minSdk = 31; targetSdk = 35; versionCode = 2; versionName = "0.1.1"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
+ defaultConfig { applicationId = "cn.jieti"; minSdk = 31; targetSdk = 35; versionCode = 13; versionName = "0.2.3"; testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner" }
  compileOptions { sourceCompatibility = JavaVersion.VERSION_17; targetCompatibility = JavaVersion.VERSION_17 }
  kotlinOptions { jvmTarget = "17" }
  buildFeatures { compose = true; buildConfig = true }
  packaging { resources.excludes += setOf("META-INF/DEPENDENCIES", "META-INF/LICENSE*", "META-INF/NOTICE*") }
- buildTypes { getByName("release") { isMinifyEnabled = false } }
+ buildTypes {
+  getByName("release") {
+   isMinifyEnabled = true
+   isShrinkResources = true
+   proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"),"proguard-rules.pro")
+  }
+  // Local optimized delivery: compatible with existing personal Debug installs.
+  // Official release remains unsigned until a private release signing config is supplied.
+  create("tablet") {
+   initWith(getByName("release"))
+   signingConfig = signingConfigs.getByName("debug")
+   matchingFallbacks += listOf("release")
+   isDebuggable = false
+  }
+ }
 }
 kapt { arguments { arg("room.schemaLocation", "$projectDir/schemas") } }
 dependencies {

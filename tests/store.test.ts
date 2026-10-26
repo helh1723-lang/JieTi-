@@ -31,3 +31,7 @@ test('manual question edits retain protection metadata across synchronization',a
  const corrected=s.edit(q.id,{transcription:'corrected',classification:'wrong'});assert.deepEqual(corrected.payload.userEditedFields,['transcription','classification']);assert.equal(corrected.payload.classificationOrigin,'user');s.close();
 });
 test('exports share stable question numbers, exclude paused memories and escape HTML',async()=>{const s=await setup();s.put('memory',{...memory,status:'paused'});s.put('question',{title:'自编验收题<script>',scope:'math',concepts:['极限'],transcription:'求 $\\lim_{x\\to0}\\sin x/x$',studentWork:'尚未尝试',assetIds:[],classification:'help',errorTypes:[],diagnosis:'只求助，尚无错误证据',solution:'待核验',status:'open'});const out=exportData(s);assert.match(out.markdown,/Q001/);assert.match(out.body,/Q001/);assert.doesNotMatch(out.body,/<script>/);assert.equal(out.memories.length,0);s.close();});
+
+test('interrupted output keeps an explicit draft label when exported',async()=>{
+ const s=await setup();try{const q=s.put('question',{title:'中断验收',scope:'math',concepts:[],transcription:'题干',studentWork:'',assetIds:[],classification:'help',errorTypes:[],diagnosis:'',solution:'',status:'open'});s.put('message',{questionId:q.id,role:'assistant',content:'尚未完成的推导',mode:'轻提示',memoryIds:[],assetIds:[],policyId:'',completion:'truncated'});assert.match(exportData(s).markdown,/未完成草稿，不作为学习证据/);}finally{s.close();}
+});

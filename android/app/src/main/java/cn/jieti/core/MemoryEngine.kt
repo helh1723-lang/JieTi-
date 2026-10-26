@@ -1,6 +1,7 @@
 package cn.jieti.core
 
 import cn.jieti.data.*
+import androidx.room.withTransaction
 import kotlinx.serialization.json.*
 import java.time.Instant
 import java.time.ZoneId
@@ -9,13 +10,26 @@ import java.time.temporal.ChronoUnit
 object MemoryRules {
  fun promotesPreference(sourceIds:List<String>)=sourceIds.distinct().size>=2
  fun mastery(evidence:List<Pair<String,Evidence>>,dates:Map<String,String>,at:Instant=Instant.now()):String {
-  val successes=evidence.filter{it.second.outcome=="correct"&&it.second.independent&&it.second.hintLevel==0}
-  if(evidence.isEmpty())return "unknown"
-  val last=evidence.mapNotNull{dates[it.first]?.let(Instant::parse)}.maxOrNull()?:return "unknown"
-  if(ChronoUnit.DAYS.between(last,at)>30)return "needs_refresh"
-  val days=successes.mapNotNull{dates[it.first]?.let{d->Instant.parse(d).atZone(ZoneId.of("Asia/Shanghai")).toLocalDate()}}.distinct()
-  return if(successes.map{it.second.questionId}.distinct().size>=3&&days.size>=2)"mastered" else if(successes.isNotEmpty())"developing" else "needs_evidence"
+  val dated=evidence.mapNotNull{item->runCatching{dates[item.first]?.let(java.time.Instant::parse)?.let{item to it}}.getOrNull()}.filter{!it.second.isAfter(at)}
+  if(dated.isEmpty())return "unknown"
+  if(ChronoUnit.DAYS.between(dated.maxOf{it.second},at)>30)return "needs_refresh"
+  // A revised result for the same question replaces its older result.
+  val recent=dated.filter{ChronoUnit.DAYS.between(it.second,at)<=30}.groupBy{it.first.second.questionId}.values.map{rows->rows.maxBy{it.second}}.sortedBy{it.second}
+  val lastError=recent.lastOrNull{it.first.second.outcome=="incorrect"}?.second
+  val successes=recent.filter{it.first.second.let{e->e.outcome=="correct"&&e.independent&&e.hintLevel==0}&&(lastError==null||it.second>lastError)}
+  val days=successes.map{it.second.atZone(ZoneId.of("Asia/Shanghai")).toLocalDate()}.distinct()
+  return if(successes.size>=3&&days.size>=2)"mastered" else if(successes.isNotEmpty()||recent.any{it.first.second.outcome=="correct"&&it.first.second.independent&&it.first.second.hintLevel==0})"developing" else "needs_evidence"
  }
+ enum class Intent { REMEMBER, FORGET, SKIP, NONE }
+ fun directText(text:String)=text.replace(Regex("(?s)```.*?```|[“\"].*?[”\"]|‘.*?’|「.*?」|『.*?』"),"").lineSequence().filterNot{it.trimStart().startsWith(">")}.joinToString("\n")
+ fun intent(text:String):Intent {
+  val direct=directText(text)
+  if(Regex("(?:不要|不用|别|无需|不必|不许|不能|不想|别再)(?:再|帮我|替我)?(?:记住|记录|保存.*记忆|记下)|不.*(?:加入|写入).*记忆").containsMatchIn(direct))return Intent.SKIP
+  if(Regex("(?:^|[。！\n；])\\s*(?:请|帮我)?(?:忘掉|忘记|遗忘|删除记忆)").containsMatchIn(direct))return Intent.FORGET
+  if(Regex("(?:^|[。！\n；])\\s*(?:请|帮我)?记住|^以后(?:都|请|回答|提示|讲解|解释|默认)").containsMatchIn(direct))return Intent.REMEMBER
+  return Intent.NONE
+ }
+
  fun context(r:SyncRecord)=buildJsonObject {put("id",r.id);for(k in listOf("scope","category","value","origin","confidence","observedAt"))r.payload[k]?.let{put(k,it)};put("sourceIds",JsonArray(r.payload.strings("sourceIds").takeLast(3).map(::JsonPrimitive)))}
  fun recall(records:List<SyncRecord>,scope:String,query:String,maxChars:Int=3000):List<SyncRecord>{
   val keys=query.lowercase().filterNot{it.isWhitespace()}.windowed(2).toSet()
@@ -29,7 +43,7 @@ class MemoryEngine(private val store:LearningStore){
  suspend fun observeStyle(scope:String,family:String,choice:String,sourceIds:List<String>):Boolean {
   val value=TeachingStyle.value(family,choice)?:return false
   val valid=mutableListOf<String>();for(id in sourceIds.distinct()){val m=store.get(id);if(m!=null&&!m.deleted&&m.kind=="message"&&m.payload.s("role")=="user"&&store.get(m.payload.s("questionId"))?.deleted!=true)valid.add(id)}
-  if(valid.isEmpty())return false
+  val suppressed=store.all("forget").flatMap{it.payload.strings("sourceIds")}.toSet();valid.removeAll(suppressed);if(valid.isEmpty())return false
   val related=store.all("memory").filter{TeachingStyle.family(it.payload.s("key"))==family&&(it.payload.s("scope")==scope||it.payload.s("scope")=="global")}
   if(related.any{it.payload.b("locked")||it.payload.s("status")=="paused"||it.payload.s("origin")=="explicit"})return false
   val key="$family:observed:$choice";val old=related.firstOrNull{it.payload.s("key")==key&&it.payload.s("scope")==scope}
@@ -49,13 +63,17 @@ class MemoryEngine(private val store:LearningStore){
  }
  suspend fun refreshStale(){for(r in store.all("mastery")){val observed=runCatching{Instant.parse(r.payload.s("observedAt"))}.getOrNull()?:continue;if(ChronoUnit.DAYS.between(observed,Instant.now())>30&&r.payload.s("state")!="needs_refresh")store.edit(r.id,buildJsonObject{put("state","needs_refresh")})}}
  suspend fun explicit(text:String,scope:String,sourceId:String){
-  if(text.contains("记住")||text.contains("以后")||text.contains("忘掉")||text.contains("不要记录")){
-   if(text.contains("忘掉")||text.contains("不要记录")){
-    val needle=text.replace(Regex("请|忘掉|这条|以后|不要记录|记忆|[，。！ ]"),"")
-    val matches=store.all("memory").filter{needle.isNotBlank()&&it.payload.s("value").contains(needle)}
-    for(m in matches)store.forget(m.id)
-   }else{
-    val content=text.replace(Regex("^.*?(?:记住[：:,， ]*|以后[：:,， ]*)"),"").trim()
+  val intent=MemoryRules.intent(text);val direct=if(intent==MemoryRules.Intent.REMEMBER)text.trim()else MemoryRules.directText(text)
+  when(intent){
+   MemoryRules.Intent.NONE->return
+   MemoryRules.Intent.SKIP->{store.put("forget",payload(ForgetRule("",scope,"source:$sourceId",listOf(sourceId),"本轮不记录长期记忆")),"skip-memory:$sourceId");return}
+   MemoryRules.Intent.FORGET->{
+    val needle=direct.replace(Regex("^(?:请|帮我)?(?:忘掉|忘记|遗忘|删除记忆)[：:,， ]*"),"").trim().trimEnd('。','！')
+    if(needle.length>=2)for(m in store.all("memory").filter{it.payload.s("scope") in listOf(scope,"global")&&it.payload.s("value").contains(needle)})store.forget(m.id)
+    return
+   }
+   MemoryRules.Intent.REMEMBER->{
+    val content=direct.replace(Regex("^.*?(?:记住[：:,， ]*|以后[：:,， ]*)"),"").trim()
     var key=when{Regex("简短|啰嗦|详细|精简|回答.*长|回答.*短").containsMatchIn(content)->"response_length";Regex("提示.*步|提示.*多|提示.*少|提示.*深").containsMatchIn(content)->"hint_granularity";Regex("图解|画图|可视化|动画").containsMatchIn(content)->"visualization";Regex("符号|归一化|变换定义").containsMatchIn(content)->"notation";else->"explicit:${sha(content.toByteArray()).take(20)}"}
     val targetScope=if(Regex("所有学科|全局|默认回答|一律|以后都").containsMatchIn(text))"global"else scope
     if(store.all("forget").any{it.payload.s("scope")==targetScope&&it.payload.s("key")==key}){
@@ -84,5 +102,30 @@ class MemoryEngine(private val store:LearningStore){
   val previous=m.payload.strings("sourceIds");val remaining=mutableListOf<String>();for(id in previous)if(store.get(id)?.deleted!=true)remaining.add(id)
   if(remaining.size!=previous.size)store.edit(m.id,buildJsonObject{put("sourceIds",JsonArray(remaining.map(::JsonPrimitive)));put("status",if(remaining.isEmpty())"superseded"else if(remaining.size<2)"candidate"else m.payload.s("status"))})
  }}
- suspend fun refreshMastery(scope:String,concept:String){val all=store.all("evidence");val evidence=all.filter{it.payload.s("scope")==scope&&it.payload.s("concept")==concept};val state=MemoryRules.mastery(evidence.map{it.id to it.value<Evidence>()},all.associate{it.id to it.updatedAt});store.put("mastery",payload(MasterySnapshot(scope,concept,state,evidence.map{it.id},now())),"mastery:${sha("$scope:$concept".toByteArray()).take(24)}")}
+ suspend fun refreshMastery(scope:String,concept:String):Unit=store.db.withTransaction{
+  val evidence=store.all("evidence").filter{it.payload.s("scope")==scope&&it.payload.s("concept")==concept}
+  val dates=mutableMapOf<String,String>()
+  for(e in evidence){val sourceDates=mutableListOf<String>();for(id in e.payload.strings("sourceIds"))store.get(id)?.takeUnless{it.deleted}?.updatedAt?.let{sourceDates.add(it)};dates[e.id]=sourceDates.maxOrNull()?:e.updatedAt}
+  saveMastery(scope,concept,evidence,dates);Unit
+ }
+ /** Startup/sync maintenance reads evidence and source dates once, not once per concept. */
+ suspend fun refreshAllMastery():Int=store.db.withTransaction{
+  val masteries=store.all("mastery");if(masteries.isEmpty())return@withTransaction 0
+  val evidence=store.all("evidence");val grouped=evidence.groupBy{it.payload.s("scope") to it.payload.s("concept")}
+  val dates=HashMap<String,String>()
+  val ids=evidence.flatMap{it.payload.strings("sourceIds")}.distinct()
+  for(batch in ids.chunked(400))for(row in store.dao.rowsByIds(batch)){val r=wire.decodeFromString<SyncRecord>(row.json);if(!r.deleted)dates[r.id]=r.updatedAt}
+  var changed=0
+  for(m in masteries.distinctBy{it.payload.s("scope") to it.payload.s("concept")}){val scope=m.payload.s("scope");val concept=m.payload.s("concept");val rows=grouped[scope to concept].orEmpty();val observed=rows.associate{e->e.id to (e.payload.strings("sourceIds").mapNotNull{dates[it]}.maxOrNull()?:e.updatedAt)}
+   if(saveMastery(scope,concept,rows,observed))changed++
+  }
+  changed
+ }
+ private suspend fun saveMastery(scope:String,concept:String,evidence:List<SyncRecord>,dates:Map<String,String>):Boolean{
+  val state=MemoryRules.mastery(evidence.map{it.id to it.value<Evidence>()},dates);val id="mastery:${sha("$scope:$concept".toByteArray()).take(24)}";val old=store.get(id)
+  val newest=dates.values.mapNotNull{runCatching{Instant.parse(it)}.getOrNull()}.filter{!it.isAfter(Instant.now())}.maxOrNull()
+  val observed=old?.payload?.s("observedAt")?.let{runCatching{Instant.parse(it)}.getOrNull()}
+  if(old?.deleted==false&&old.payload.s("state")==state&&old.payload.strings("evidenceIds").toSet()==evidence.map{it.id}.toSet()&&(newest==null||observed!=null&&!observed.isBefore(newest)))return false
+  store.put("mastery",payload(MasterySnapshot(scope,concept,state,evidence.map{it.id},now())),id);return true
+ }
 }

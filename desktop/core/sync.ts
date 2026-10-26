@@ -9,6 +9,7 @@ import type {SyncRecord} from '../../shared/generated/protocol';
 const limit=16*1024*1024;
 export class SyncServer {
  private server?:https.Server;private secret='';private expires=0;
+ private exportJob?:Promise<void>;private exportState:{status:'idle'|'running'|'complete'|'failed'}={status:'idle'};
  constructor(readonly store:Store,readonly changed:()=>void,readonly completed:()=>Promise<void>){ }
  private identity(){
   const file=path.join(this.store.root,'tls.json');
@@ -47,12 +48,14 @@ export class SyncServer {
   const token=(req.headers.authorization||'').replace(/^Bearer /,'');
   if(!this.authorized(token))return send({error:'请重新配对'},401);
   if(url.pathname==='/manifest'&&req.method==='GET')return send({records:this.store.heads(),deviceId:this.store.deviceId});
+  if(url.pathname==='/history/push'&&req.method==='POST'){const {records}=JSON.parse((await this.body(req)).toString());if(!Array.isArray(records)||records.length>10)throw new Error('批次过大');this.store.remember(records);return send({complete:true});}
+  if(url.pathname==='/history/pull'&&req.method==='POST'){const {id,rev}=JSON.parse((await this.body(req)).toString());return send(this.store.historyPage(String(id),String(rev||'')));}
   if(url.pathname==='/records/pull'&&req.method==='POST'){
    const {ids}=JSON.parse((await this.body(req)).toString());if(!Array.isArray(ids)||ids.length>100)throw new Error('批次过大');return send({records:ids.map(id=>this.store.get(String(id))).filter(Boolean)});
   }
   if(url.pathname==='/records/push'&&req.method==='POST'){
    const {records}=JSON.parse((await this.body(req)).toString());if(!Array.isArray(records)||records.length>100)throw new Error('批次过大');records.forEach(assertRecord);
-   for(const r of (records as SyncRecord[]).filter(r=>!r.deleted))for(const hash of (r.payload.assetIds as string[]||[]))if(!fs.existsSync(this.store.assetPath(hash)))return send({error:'附件尚未完整到达'},409);
+   for(const r of (records as SyncRecord[]).filter(r=>!r.deleted))for(const hash of [...(r.payload.assetIds as string[]||[]),...(typeof r.payload.focusAssetId==='string'&&/^[a-f0-9]{64}$/.test(r.payload.focusAssetId)?[r.payload.focusAssetId]:[])])if(!fs.existsSync(this.store.assetPath(hash)))return send({error:'附件尚未完整到达'},409);
    const result=this.store.ingest(records);this.changed();return send(result);
   }
   const asset=url.pathname.match(/^\/assets\/([a-f0-9]{64})$/);
@@ -74,7 +77,11 @@ export class SyncServer {
     return send({complete,offset:fs.statSync(complete?target:tmp).size});
    }
   }
-  if(url.pathname==='/complete'&&req.method==='POST'){await this.completed();this.changed();return send({complete:true});}
+  if(url.pathname==='/export-status'&&req.method==='GET')return send(this.exportState);
+  if(url.pathname==='/complete'&&req.method==='POST'){
+   if(!this.exportJob){this.exportState={status:'running'};this.exportJob=Promise.resolve().then(()=>this.completed()).then(()=>{this.exportState={status:'complete'};},()=>{this.exportState={status:'failed'};}).finally(()=>{this.exportJob=undefined;this.changed();});}
+   return send({complete:true,export:this.exportState.status});
+  }
   send({error:'接口不存在'},404);
  }
 }

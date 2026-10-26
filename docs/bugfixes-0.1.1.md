@@ -55,4 +55,4 @@
 
 最终命令、证据、测试计数和未验证项记录于 [验收记录](verification.md) 的 0.1.1 部分。新的测试只使用独立合成数据库或隔离的桌面数据目录，没有调用真实模型。
 
-公开仓库提供源码与根目录产品介绍 PDF，安装包可按 README 从源码构建。
+安装包位于 `release/android/Jieti-0.1.1-debug.apk`、`release/windows/Jieti-0.1.1-x64.exe`，便携包为同目录 ZIP，源码包位于 `release/source/`。SHA-256 与大小见 `release/manifest.json`。

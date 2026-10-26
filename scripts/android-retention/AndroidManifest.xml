@@ -1,0 +1,5 @@
+<manifest xmlns:android="http://schemas.android.com/apk/res/android" package="cn.jieti.retention">
+ <uses-sdk android:minSdkVersion="31" android:targetSdkVersion="35" />
+ <application android:label="截题数据保留校验" android:hasCode="true" />
+ <instrumentation android:name="cn.jieti.retention.Check" android:targetPackage="cn.jieti" android:label="平台接口校验" />
+</manifest>

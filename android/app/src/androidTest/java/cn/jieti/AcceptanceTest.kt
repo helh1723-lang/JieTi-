@@ -39,7 +39,7 @@ import java.util.Random
   val m=app.store.put("memory",payload(MemoryItem("preference","math","acceptance-test","验收用临时记忆",listOf("acceptance-only"),"explicit",1.0,now(),"active",false)))
   app.store.forget(m.id);val old=m.copy(rev=uid());app.store.ingest(old);assertTrue(app.store.get(m.id)!!.deleted)
   app.store.dao.chunk(ChunkRow("acceptance:chunk","acceptance:document","math",1,"连续有界数列",Library.tokenize("连续有界数列")))
-  assertTrue(app.store.dao.search("math","\"有界\"").any{it.id=="acceptance:chunk"})
+  assertTrue(app.store.dao.search("math","\"有界\"","").any{it.id=="acceptance:chunk"})
  }
  @Test fun fiftyThousandVectorIndexAndKnownNeighbor(){
   val context=InstrumentationRegistry.getInstrumentation().targetContext

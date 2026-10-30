@@ -83,6 +83,17 @@ Android 负责悬浮截图、答疑和练习；Windows 负责浏览、编辑、�
 
 ## 🚀 开始和截题一起学习
 
+### 🧭 版本与下载入口
+
+| 平台 | 当前源码版本 | 安装与体验 |
+| --- | --- | --- |
+| Android 平板 | **0.2.3 · versionCode 13** | [下载公开 APK](https://github.com/helh1723-lang/JieTi-/releases/download/v0.2.3/Jieti-0.2.3-tablet.apk) |
+| Windows 学习手记 | **0.2.1** | 按下方开发说明运行或打包；当前 Release 未提供 Windows 安装包 |
+
+Android 与 Windows 分别维护版本号。公开版保留应用功能，使用通用导师配置；个人教学档案和本机设置不会随仓库发布。
+
+🌱 **2026-10-30 已核对源码同步状态**：[查看版本与同步说明](docs/source-sync-2026-10-30.md)。
+
 ### Android 平板
 
 1. 从 [Releases](https://github.com/helh1723-lang/JieTi-/releases/latest) 下载 Android APK，当前公开版本为 **0.2.3**，支持 **Android 12 及以上**。
@@ -159,10 +170,10 @@ npm run package
 
 🐈 谢谢你路过截题的小小学习角落，留下一枚猫猫脚印吧。🌷
 
-<img src="https://komarev.com/ghpvc/?username=helh1723-lang.JieTi-&amp;label=%E5%B0%8F%E8%84%9A%E5%8D%B0&amp;color=819a87&amp;style=for-the-badge" alt="截题 README 累计访问次数 · 小脚印计数器" />
+[![README visits](https://hits.sh/github.com/helh1723-lang/JieTi-.svg?style=for-the-badge&label=visits&color=819a87)](https://hits.sh/github.com/helh1723-lang/JieTi-/)
 
-<sub>从添加后开始累计 README 的图片访问次数，非去重人数；缓存可能造成延迟，也不代表仓库所有页面的完整访问量。</sub><br />
-<sub>访问计数由 <a href="https://github.com/antonkomarev/github-profile-views-counter">GitHub Profile Views Counter</a> 提供。</sub>
+<sub>从本计数器启用后累计 README 图片访问次数，非去重人数；缓存可能造成延迟。点击徽章可查看统计。</sub><br />
+<sub>访问计数由 <a href="https://github.com/silentsoft/hits">Hits</a> 提供。</sub>
 
 <br /><br />
 
